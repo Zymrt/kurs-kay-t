@@ -1,0 +1,202 @@
+.App {
+  text-align: center;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 20px auto;
+  padding: 0 20px;
+}
+
+.navbar {
+  background-color: #ff8800;
+  padding: 1rem 2rem;
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.navbar-brand {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: white;
+}
+
+.nav-links {
+  list-style: none;
+  display: flex;
+  margin: 0;
+  padding: 0;
+}
+
+.nav-links li {
+  margin-left: 20px;
+}
+
+.nav-links a, .nav-links button {
+  color: white;
+  text-decoration: none;
+  font-size: 1rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.nav-links a:hover, .nav-links button:hover {
+  color: #00bcd4;
+}
+
+/* Form Stilleri */
+.form-container {
+  max-width: 400px;
+  margin: 40px auto;
+  padding: 30px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+.form-container h2 {
+  margin-top: 0;
+  margin-bottom: 20px;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+.btn {
+  width: 100%;
+  padding: 12px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.btn:hover {
+  background-color: #0056b3;
+}
+
+/* Kurs Kartı Stilleri */
+.course-list, .my-courses {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+  text-align: left;
+}
+
+.course-card {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.course-card h3 {
+  margin-top: 0;
+  color: #007bff;
+}
+
+.course-card p {
+  flex-grow: 1;
+}
+
+.course-card .instructor {
+  font-style: italic;
+  color: #555;
+  margin-bottom: 15px;
+}
+
+.btn-join {
+  background-color: #28a745;
+}
+
+.btn-join:hover {
+  background-color: #218838;
+}
+
+.btn-join:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+/* src/App.css dosyasının sonuna EKLENECEK stiller */
+
+.btn-delete {
+  background-color: #dc3545;
+  margin-top: 10px; /* Diğer butonla arasında boşluk bırakmak için */
+}
+
+.btn-delete:hover {
+  background-color: #c82333;
+}
+
+/* Kart içindeki butonları yan yana getirmek için */
+.card-buttons {
+  display: flex;
+  flex-direction: column; /* Butonları alt alta koyar */
+  margin-top: auto; /* Butonları kartın en altına iter */
+}
+
+/* Eğer butonları yan yana isterseniz:
+.card-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: auto;
+}
+.card-buttons .btn {
+  width: 48%; 
+  margin-top: 10px;
+}
+*/
+/* Navbar Stilleri */
+.navbar {
+  background-color: #ff6600;
+  padding: 1rem 2rem;
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* DEĞİŞİKLİK BURADA: navbar-brand'i esnek bir kutu yapıyoruz */
+.navbar-brand {
+  display: flex; /* Öğeleri (logolar, başlık) yan yana getirmek için */
+  align-items: center; /* Öğeleri dikey olarak ortalamak için */
+  gap: 15px; /* Öğeler arasına boşluk bırakmak için */
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: white;
+  text-decoration: none; /* Link alt çizgisini kaldır */
+}
+
+/* YENİ STİLLER: Logoların boyutunu ayarlıyoruz */
+.navbar-logo {
+  height: 40px; /* Logonun yüksekliğini ayarla, genişlik otomatik ayarlanacak */
+  width: auto;
+}
+
+/* YENİ STİL: Başlık yazısı için */
+.navbar-title {
+  margin-left: 520px; /* Son logo ile yazı arasına ek boşluk */
+}
