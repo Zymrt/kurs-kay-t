@@ -3,15 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use App\Models\User;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Validator;
-use Tymon\JWTAuth\Facades\JWTAuth; // <-- BURASI
-use App\Models\Enrollment;
-use App\Http\Controllers\AuthController;
-
-
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 class AuthController extends Controller
 {
@@ -30,7 +23,7 @@ class AuthController extends Controller
             'is_admin' => false
         ]);
 
-        $token = JWTAuth::fromUser($user); // 🟢 Artık çalışır
+        $token = JWTAuth::fromUser($user);
 
         return response()->json([
             'message' => 'Kayıt başarılı',
@@ -43,7 +36,7 @@ class AuthController extends Controller
     {
         $credentials = $request->only(['email', 'password']);
 
-        if (! $token = auth()->attempt($credentials)) {
+        if (! $token = JWTAuth::attempt($credentials)) {
             return response()->json(['error' => 'Geçersiz giriş bilgileri'], 401);
         }
 
@@ -63,12 +56,12 @@ class AuthController extends Controller
 
     public function logout()
     {
-        Auth::guard('api')->logout();
-        return response()->json(['message' => 'User successfully signed out']);
+        JWTAuth::invalidate(JWTAuth::getToken()); 
+        return response()->json(['message' => 'Başarıyla çıkış yapıldı']);
     }
 
     public function me()
     {
-        return response()->json(['message' => 'me endpoint working']);
+        return response()->json(auth()->user());
     }
 }
