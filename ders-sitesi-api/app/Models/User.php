@@ -2,51 +2,69 @@
 
 namespace App\Models;
 
-// Standart Model yerine MongoDB modelini kullan
-use MongoDB\Laravel\Eloquent\Model; 
+// Gerekli sınıfları ve arayüzleri 'use' ile çağırıyoruz
+use MongoDB\Laravel\Eloquent\Model;
 use Illuminate\Auth\Authenticatable;
-use Illuminate\Auth\Passwords\CanResetPassword;
-use Illuminate\Foundation\Auth\Access\Authorizable;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
-use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
-use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
 use Illuminate\Notifications\Notifiable;
-use Tymon\JWTAuth\Contracts\JWTSubject; // JWT için bunu ekle
+use Tymon\JWTAuth\Contracts\JWTSubject; // JWT için en önemli kısım bu
 
-// Authenticatable'ı implemente et ve JWTSubject'i de ekle
-class User extends Model implements
-    AuthenticatableContract,
-    AuthorizableContract,
-    CanResetPasswordContract,
-    JWTSubject
+class User extends Model implements AuthenticatableContract, JWTSubject
 {
-    use Authenticatable, Authorizable, CanResetPassword, Notifiable;
+    // Authenticatable ve Notifiable 'trait'lerini kullanıyoruz
+    use Authenticatable, Notifiable;
 
-    protected $connection = 'mongodb'; 
-    protected $collection = 'users';   
+    /**
+     * Veritabanı bağlantısı.
+     */
+    protected $connection = 'mongodb';
 
-    
+    /**
+     * Modelin ilişkili olduğu koleksiyon.
+     */
+    protected $collection = 'users';
 
+    /**
+     * Toplu atama ile doldurulabilir alanlar.
+     */
     protected $fillable = [
         'name',
         'email',
         'password',
-        'is_admin'
+        'is_admin',
     ];
 
-    protected $hidden = ['password'];
+    /**
+     * JSON'a çevrilirken gizlenmesi gereken alanlar.
+     */
+    protected $hidden = [
+        'password',
+        'remember_token',
+    ];
 
+    /**
+     * Otomatik tip dönüşümü yapılacak alanlar.
+     */
     protected $casts = [
-        'email_verified_at' => 'datetime',
-        'is_admin' => 'boolean', 
+        'is_admin' => 'boolean',
+        'password' => 'hashed', // Şifrenin otomatik hash'lenmesini sağlar
     ];
 
-    
+    // --- JWT İÇİN ZORUNLU METODLAR ---
+
+    /**
+     * JWT (JSON Web Token) için kullanıcı kimliğini (subject claim) alır.
+     * Bu genellikle kullanıcının birincil anahtarıdır (primary key).
+     */
     public function getJWTIdentifier()
     {
         return $this->getKey();
     }
 
+    /**
+     * JWT token'ına eklenecek özel 'claim'leri (ek bilgileri) döndürür.
+     * Boş bir dizi döndürmek, ekstra bir bilgi eklenmeyeceği anlamına gelir.
+     */
     public function getJWTCustomClaims()
     {
         return [];

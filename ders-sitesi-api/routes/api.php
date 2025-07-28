@@ -1,60 +1,68 @@
 <?php
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CourseController;
 use App\Http\Controllers\EnrollmentController;
 use App\Http\Controllers\InstructorController;
 
+/*
+|--------------------------------------------------------------------------
+| API Rotaları
+|--------------------------------------------------------------------------
+*/
 
+// =========================================================================
+//  BÖLÜM 1: HERKESE AÇIK ROTALAR (TOKEN GEREKMEZ)
+// =========================================================================
 
-// Kullanıcı Kayıt ve Giriş İşlemleri
 Route::post('/auth/register', [AuthController::class, 'register']);
 Route::post('/auth/login', [AuthController::class, 'login']);
 
-// Dersleri ve Eğitmenleri Listeleme İşlemleri
-// Misafir kullanıcılar da derslere ve eğitmenlere göz atabilmelidir.
 Route::get('/courses', [CourseController::class, 'index']);
-Route::get('/courses/{course}', [CourseController::class, 'show']);
+// {course} -> CourseController'daki 'Course $course' ile eşleşir (Route-Model Binding)
+Route::get('/courses/{course}', [CourseController::class, 'show']); 
+
 Route::get('/instructors', [InstructorController::class, 'index']);
 Route::get('/instructors/{instructor}', [InstructorController::class, 'show']);
 
 
+// =========================================================================
+//  BÖLÜM 2: GİRİŞ YAPMAYI GEREKTİREN KORUMALI ROTALAR
+// =========================================================================
 
 Route::middleware('auth:api')->group(function () {
 
-    // --- KULLANICI İŞLEMLERİ (Tüm giriş yapmış kullanıcılar için) ---
-
-    // Profil ve Çıkış
+    // --- Kullanıcı İşlemleri ---
     Route::get('/auth/me', [AuthController::class, 'me']);
     Route::post('/auth/logout', [AuthController::class, 'logout']);
 
-    // Derse Başvurma ve Kendi Başvurularını Görme
-    
+    // --- Başvuru İşlemleri (Kullanıcı Tarafı) ---
+    // POST /enrollments/{course} -> Bir derse başvuru oluşturur. Controller metodu: store
+    Route::post('/enrollments/{course}', [EnrollmentController::class, 'store']);
+    Route::get('/my-enrollments', [EnrollmentController::class, 'myEnrollments']);
 
 
-    //ders düzenleme ve silme
     
-
-    // --- SADECE ADMİNLERİN ERİŞEBİLECEĞİ ROTALAR (İç İçe Koruma) ---
-    // Bu gruptaki rotalar, hem giriş yapmayı (auth:api) hem de admin olmayı (admin) gerektirir.
+    //   SADECE ADMİNLERİN ERİŞEBİLECEĞİ ROTALAR
+   
     
-    Route::middleware('admin')->group(function () {
+    // '/admin' ön eki, tüm admin rotalarının /api/admin/... şeklinde başlamasını sağlar.
+    Route::prefix('admin')->middleware('admin')->group(function () {
         
-        // Admin: Ders Yönetimi
+        // Admin: Ders Yönetimi (/api/admin/courses)
         Route::post('/courses', [CourseController::class, 'store']);
         Route::put('/courses/{course}', [CourseController::class, 'update']);
         Route::delete('/courses/{course}', [CourseController::class, 'destroy']);
 
-        // Admin: Eğitmen Yönetimi
+        // Admin: Eğitmen Yönetimi (/api/admin/instructors)
         Route::post('/instructors', [InstructorController::class, 'store']);
-        Route::put('/instructors/{instructor}', [InstructorController::class, 'update']); // Güncelleme rotası da ekleyelim
-        Route::delete('/instructors/{instructor}', [InstructorController::class, 'destroy']); // Silme rotası da ekleyelim
+        Route::put('/instructors/{instructor}', [InstructorController::class, 'update']);
+        Route::delete('/instructors/{instructor}', [InstructorController::class, 'destroy']);
 
-        // Admin: Kayıt Yönetimi
-        Route::post('/enroll/{courseId}', [EnrollmentController::class, 'enroll']);
-        Route::get('/admin/enrollments', [EnrollmentController::class, 'index']);
-        Route::get('/admin/enrollments', [EnrollmentController::class, 'listAllEnrollments']);
+        // Admin: Kayıt Yönetimi (/api/admin/enrollments)
+        Route::get('/enrollments', [EnrollmentController::class, 'listAllEnrollments']);
+        // Bir başvurunun durumunu güncellemek için PATCH metodu daha uygundur.
+        Route::patch('/enrollments/{enrollment}', [EnrollmentController::class, 'updateStatus']);
     });
 });

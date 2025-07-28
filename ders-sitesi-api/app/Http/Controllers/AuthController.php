@@ -2,66 +2,96 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\User;
-use Tymon\JWTAuth\Facades\JWTAuth;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
 
 class AuthController extends Controller
 {
+   
+
+    /**
+     * Yeni bir kullanıcı kaydeder.
+     */
     public function register(Request $request)
     {
-        $request->validate([
+        $validator = Validator::make($request->all(), [
             'name'     => 'required|string|max:255',
-            'email'    => 'required|string|email|unique:users',
-            'password' => 'required|string|min:6',
+            'email'    => 'required|string|email|max:255|unique:users',
+            'password' => 'required|string|min:6|confirmed',
         ]);
 
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
+
+        // User modelindeki 'hashed' cast'i sayesinde şifre otomatik olarak hash'lenir.
         $user = User::create([
             'name'     => $request->name,
             'email'    => $request->email,
-            'password' => bcrypt($request->password),
-            'is_admin' => false
+            'password' => $request->password, // bcrypt() veya Hash::make() GEREKMEZ
+            'is_admin' => false,
         ]);
+        
+        // Kullanıcıyı oluşturduktan hemen sonra giriş yaptır ve token'ını al
+        $token = Auth::guard('api')->login($user);
 
-        $token = JWTAuth::fromUser($user);
-
-        return response()->json([
-            'message' => 'Kayıt başarılı',
-            'user'    => $user,
-            'token'   => $token
-        ], 201);
+        // Standart cevap formatımızı kullanarak başarılı bir cevap döndür
+        return $this->respondWithToken($token, 'Kayıt başarılı, giriş yapıldı.');
     }
 
+    /**
+     * Kullanıcı girişi yapar ve JWT token'ı döndürür.
+     */
     public function login(Request $request)
     {
-        $credentials = $request->only(['email', 'password']);
-
-        if (! $token = JWTAuth::attempt($credentials)) {
-            return response()->json(['error' => 'Geçersiz giriş bilgileri'], 401);
+        $validator = Validator::make($request->all(), [
+            'email'    => 'required|email',
+            'password' => 'required|string',
+        ]);
+        
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
         }
 
-        $user = auth()->user();
+        $credentials = $validator->validated();
 
-        return response()->json([
-            'message' => 'Giriş başarılı',
-            'user'    => [
-                'id'       => $user->_id,
-                'name'     => $user->name,
-                'email'    => $user->email,
-                'is_admin' => $user->is_admin
-            ],
-            'token'   => $token
-        ]);
+        if (! $token = Auth::guard('api')->attempt($credentials)) {
+            return response()->json(['error' => 'Geçersiz giriş bilgileri. Email veya şifre hatalı.'], 401);
+        }
+
+        return $this->respondWithToken($token, 'Giriş başarılı.');
     }
 
+    /**
+     * Kullanıcı çıkışı yapar (token'ı geçersiz kılar).
+     */
     public function logout()
     {
-        JWTAuth::invalidate(JWTAuth::getToken()); 
-        return response()->json(['message' => 'Başarıyla çıkış yapıldı']);
+        Auth::guard('api')->logout();
+        return response()->json(['message' => 'Başarıyla çıkış yapıldı.']);
     }
 
+    /**
+     * Giriş yapmış kullanıcının profil bilgilerini getirir.
+     */
     public function me()
     {
-        return response()->json(auth()->user());
+        return response()->json(Auth::guard('api')->user());
+    }
+    
+    /**
+     * Token, kullanıcı ve diğer bilgileri içeren standart bir cevap formatı oluşturan yardımcı fonksiyon.
+     */
+    protected function respondWithToken($token, $message = 'İşlem başarılı.')
+    {
+        return response()->json([
+            'message'       => $message,
+            'access_token'  => $token,
+            'token_type'    => 'bearer',
+            'expires_in'    => Auth::guard('api')->factory()->getTTL() * 60,
+            'user'          => Auth::guard('api')->user()
+        ]);
     }
 }

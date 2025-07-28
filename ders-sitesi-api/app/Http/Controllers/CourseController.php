@@ -6,93 +6,75 @@ use App\Models\Course;
 use App\Models\Instructor;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
-use App\Http\Resources\CourseResource;
-use App\Models\Enrollment;
 
 class CourseController extends Controller
 {
-    // Dersleri listeleme
+    /**
+     * Dersleri, eğitmen bilgileriyle birlikte listeler.
+     */
     public function index(Request $request)
     {
         $query = Course::with('instructor');
 
-        // Eğitmen ID'ye göre filtreleme
         if ($request->has('instructor_id')) {
             $query->where('instructor_id', $request->input('instructor_id'));
         }
 
-        // Sayfalama ekledik (ihtiyaç durumunda 10 ders)
         $courses = $query->latest()->paginate(10);
 
-        return CourseResource::collection($courses);
+        // API Resource kullanmadığımız için, sayfalama verisini manuel olarak formatlayabiliriz.
+        return response()->json($courses);
     }
 
-    // Yeni ders oluşturma
+    /**
+     * Yeni bir ders oluşturur. Sadece adminler erişebilir.
+     */
     public function store(Request $request)
     {
-        // Validasyon işlemi
         $validator = Validator::make($request->all(), [
-            'title'         => 'required|string|max:255|unique:courses',
-            'description'   => 'required|string',
+            'title' => 'required|string|max:255|unique:courses',
+            'description' => 'required|string',
             'instructor_id' => 'required|string|exists:instructors,_id',
-            'category'      => 'required|string',
-            'capacity'      => 'required|integer|min:1',
+            'category' => 'required|string',
+            'capacity' => 'required|integer|min:1',
         ]);
 
-        // Eğer validasyon başarısızsa hata döndür
         if ($validator->fails()) {
             return response()->json(['errors' => $validator->errors()], 422);
         }
 
-        // Eğitmen bilgilerini alıyoruz
+        // İŞ KURALI: Eğitmenin uzmanlık alanı ile dersin kategorisi eşleşmeli.
         $instructor = Instructor::find($request->input('instructor_id'));
-
-        // Eğer eğitmen yoksa hata döndür
-        if (!$instructor) {
-            return response()->json(['error' => 'Eğitmen bulunamadı.'], 404);
-        }
-
-        // Eğitmenin alanı ile dersin kategorisini kontrol et
         if ($instructor->specialty !== $request->input('category')) {
             return response()->json([
-                'errors' => [
-                    'category' => ["Bu eğitmen sadece '{$instructor->specialty}' alanında ders verebilir."]
-                ]
+                'errors' => ['category' => ["Bu eğitmen sadece '{$instructor->specialty}' alanında ders verebilir."]]
             ], 422);
         }
-
-        // Veriyi validasyondan geçtikten sonra kursu oluşturuyoruz
+        
         $validatedData = $validator->validated();
-        $validatedData['enrolled_students'] = 0;  // Dersin başlangıçtaki öğrenci sayısı
+        $validatedData['enrolled_students'] = 0; // Yeni dersin kayıtlı öğrenci sayısı 0'dır.
 
-        // Ders kaydını oluşturuyoruz
         $course = Course::create($validatedData);
 
-        return new CourseResource($course->load('instructor'));
+        return response()->json([
+            'message' => 'Ders başarıyla oluşturuldu.',
+            'data' => $course->load('instructor') // Cevapta eğitmen bilgisini de gönder
+        ], 201);
     }
 
-    // Tek bir kursu gösterme
-    public function show($id)
+    /**
+     * Belirtilen bir dersi, eğitmen bilgisiyle birlikte gösterir.
+     */
+    public function show(Course $course)
     {
-        // Kursu buluyoruz
-        $course = Course::find($id);
-        if (!$course) {
-            return response()->json(['error' => 'Kurs bulunamadı.'], 404);
-        }
-
-        return new CourseResource($course->load('instructor'));
+        return response()->json($course->load('instructor'));
     }
 
-    // Kursu güncelleme
-    public function update(Request $request, $id)
+    /**
+     * Mevcut bir dersi günceller. Sadece adminler erişebilir.
+     */
+    public function update(Request $request, Course $course)
     {
-        // Güncellenmek istenen kursu buluyoruz
-        $course = Course::find($id);
-        if (!$course) {
-            return response()->json(['error' => 'Ders bulunamadı.'], 404);
-        }
-
-        // Validasyon işlemi
         $validator = Validator::make($request->all(), [
             'title' => 'sometimes|string|max:255|unique:courses,title,' . $course->id,
             'description' => 'sometimes|string',
@@ -101,45 +83,44 @@ class CourseController extends Controller
             'capacity' => 'sometimes|integer|min:1',
         ]);
 
-        // Eğer validasyon başarısızsa hata döndür
         if ($validator->fails()) {
             return response()->json(['errors' => $validator->errors()], 422);
         }
 
-        // Eğitmen ve kategori kontrolü
-        if (isset($request->instructor_id) || isset($request->category)) {
-            $newInstructorId = $request->instructor_id ?? $course->instructor_id;
-            $newCategory = $request->category ?? $course->category;
-            $instructor = Instructor::find($newInstructorId);
+        $validatedData = $validator->validated();
 
+        // İŞ KURALI: Eğer eğitmen veya kategori değişiyorsa, uzmanlık kontrolünü tekrar yap.
+        if (isset($validatedData['instructor_id']) || isset($validatedData['category'])) {
+            $newInstructorId = $validatedData['instructor_id'] ?? $course->instructor_id;
+            $newCategory = $validatedData['category'] ?? $course->category;
+            $instructor = Instructor::find($newInstructorId);
+            
             if ($instructor && $instructor->specialty !== $newCategory) {
-                return response()->json([
+                 return response()->json([
                     'errors' => ['category' => ["Bu eğitmen sadece '{$instructor->specialty}' alanında ders verebilir."]]
                 ], 422);
             }
         }
 
-        // Kursu güncelliyoruz
-        $course->update($validator->validated());
+        $course->update($validatedData);
 
-        return new CourseResource($course->load('instructor'));
+        return response()->json([
+            'message' => 'Ders bilgileri güncellendi.',
+            'data' => $course->load('instructor')
+        ]);
     }
 
-    // Kursu silme
-    public function destroy($id)
+    /**
+     * Bir dersi siler. Sadece adminler erişebilir.
+     */
+    public function destroy(Course $course)
     {
-        // Kursu buluyoruz
-        $course = Course::find($id);
-        if (!$course) {
-            return response()->json(['error' => 'Ders bulunamadı.'], 404);
-        }
-
-        // Başvuruları sil
-        Enrollment::where('course_id', $course->id)->delete();
-
-        // Kursu siliyoruz
+        // Önce bu derse ait tüm kayıtları (enrollments) sil.
+        $course->enrollments()->delete();
+        
+        // Sonra dersin kendisini sil.
         $course->delete();
 
-        return response()->json(['message' => 'Kurs başarıyla silindi.']);
+        return response()->json(['message' => 'Ders ve ilişkili tüm başvurular başarıyla silindi.'], 200);
     }
 }

@@ -12,14 +12,36 @@ return [
     | as required, but they're a perfect start for most applications.
     |
     */
-    // config/auth.php içinde
+
+    // config/auth.php
+
+// config/auth.php
 
 'defaults' => [
-    'guard' => 'api', // Varsayılan guard'ı 'api' yap
+    'guard' => 'api', // 'web' yazan yeri 'api' olarak değiştirin
     'passwords' => 'users',
 ],
 
-// ...
+    /*
+    |--------------------------------------------------------------------------
+    | Authentication Guards
+    |--------------------------------------------------------------------------
+    |
+    | Next, you may define every authentication guard for your application.
+    | Of course, a great default configuration has been defined for you
+    | which utilizes session storage plus the Eloquent user provider.
+    |
+    | All authentication guards have a user provider, which defines how the
+    | users are actually retrieved out of your database or other storage
+    | system used by the application. Typically, Eloquent is utilized.
+    |
+    | Supported: "session"
+    |
+    */
+
+    // config/auth.php
+
+// config/auth.php
 
 'guards' => [
     'web' => [
@@ -27,11 +49,13 @@ return [
         'provider' => 'users',
     ],
 
+    
     'api' => [
         'driver' => 'jwt', 
         'provider' => 'users',
     ],
 ],
+
     /*
     |--------------------------------------------------------------------------
     | User Providers
