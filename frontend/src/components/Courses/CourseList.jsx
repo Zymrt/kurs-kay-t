@@ -12,7 +12,7 @@ function CourseList() {
   const fetchCourses = async () => {
     setLoading(true);
     try {
-      const res = await axios.get('http://localhost:5001/api/courses');
+      const res = await axios.get('127.0.0.1:8000/api/courses');
       setCourses(res.data);
     } catch (error) {
       console.error("Kurslar yüklenemedi:", error);
@@ -32,7 +32,7 @@ function CourseList() {
       return;
     }
     try {
-      const res = await axios.post(`http://localhost:5001/api/users/enroll/${courseId}`);
+      const res = await axios.post(`127.0.0.1:8000/api/users/enroll/${courseId}`);
       updateUserCourses(res.data.myCourses); // App context'ini güncelle
       alert("Kursa başarıyla katıldınız!");
     } catch (error) {
@@ -43,7 +43,7 @@ function CourseList() {
   const handleDelete = async (courseId, courseTitle) => {
     if (window.confirm(`'${courseTitle}' adlı kursu silmek istediğinizden emin misiniz?`)) {
       try {
-        await axios.delete(`http://localhost:5001/api/courses/${courseId}`);
+        await axios.delete(`127.0.0.1:8000/api/courses/${courseId}`);
         alert(`'${courseTitle}' kursu başarıyla silindi.`);
         fetchCourses(); // Listeyi yenile
       } catch (error) {

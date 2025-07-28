@@ -16,7 +16,7 @@ function RegisterForm() {
     e.preventDefault();
     setError('');
     try {
-      const res = await axios.post('http://localhost:5001/api/users/register', { name, email, password });
+      const res = await axios.post('127.0.0.1:8000/api/users/register', { name, email, password });
       loginUser(res.data);
       navigate('/');
     } catch (err) {

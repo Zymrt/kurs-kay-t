@@ -15,7 +15,7 @@ function LoginForm() {
     e.preventDefault();
     setError('');
     try {
-      const res = await axios.post('http://localhost:5001/api/users/login', { email, password });
+      const res = await axios.post('127.0.0.1:8000/api/users/login', { email, password });
       loginUser(res.data);
       if (res.data.user.role === 'admin') {
         navigate('/admin');

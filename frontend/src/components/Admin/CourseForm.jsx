@@ -19,7 +19,7 @@ function CourseForm({ onCourseAdded }) {
     }
 
     try {
-      const res = await axios.post('http://localhost:5001/api/courses', { title, description, instructor });
+      const res = await axios.post('127.0.0.1:8000/api/courses', { title, description, instructor });
       setMessage(`'${res.data.title}' başarıyla eklendi!`);
       setTitle('');
       setDescription('');

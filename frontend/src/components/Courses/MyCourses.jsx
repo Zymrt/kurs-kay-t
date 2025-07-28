@@ -11,7 +11,7 @@ function MyCourses() {
     const fetchMyCourses = async () => {
       setLoading(true);
       try {
-        const res = await axios.get('http://localhost:5001/api/users/my-courses');
+        const res = await axios.get('127.0.0.1:8000/api/users/my-courses');
         setMyCourses(res.data);
       } catch (error) {
         console.error("Kurslarım yüklenemedi:", error);
@@ -25,7 +25,7 @@ function MyCourses() {
   const handleUnenroll = async (courseId, courseTitle) => {
     if (window.confirm(`'${courseTitle}' kursundan ayrılmak istediğinizden emin misiniz?`)) {
       try {
-        const res = await axios.post(`http://localhost:5001/api/users/unenroll/${courseId}`);
+        const res = await axios.post(`127.0.0.1:8000/api/users/unenroll/${courseId}`);
         updateUserCourses(res.data.myCourses); // App context'ini güncelle
         // Listeyi anında güncellemek için state'i de güncelle
         setMyCourses(prevCourses => prevCourses.filter(course => course._id !== courseId));
