@@ -1,0 +1,112 @@
+/* src/Navbar.css */
+
+.navbar {
+  background-color: #ffffff;
+  height: 80px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.1rem;
+  position: sticky;
+  top: 0;
+  z-index: 999;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.navbar-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 80px;
+  width: 100%;
+  max-width: 1300px;
+  padding: 0 24px;
+}
+
+.navbar-brand {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.navbar-logo {
+  height: 45px;
+  margin-right: 10px;
+}
+
+.navbar-title {
+  color: #333;
+  font-weight: 700;
+  font-size: 1.2rem;
+  letter-spacing: 1px;
+  display: block; /* Mobil için gizleme ayarı yapılabilir */
+}
+
+.nav-menu {
+  display: flex;
+  align-items: center;
+  list-style: none;
+  text-align: center;
+  margin: 0;
+  padding: 0;
+}
+
+.nav-item {
+  height: 80px;
+}
+
+.nav-link {
+  color: #555;
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  padding: 0 1rem;
+  height: 100%;
+  transition: all 0.2s ease-in-out;
+}
+
+.nav-link:hover {
+  color: #007bff;
+  border-bottom: 4px solid #007bff;
+}
+
+/* NavLink'in aktif olduğunda alacağı stil */
+.nav-link.active {
+  color: #007bff;
+  border-bottom: 4px solid #007bff;
+  font-weight: 600;
+}
+
+.nav-button-logout {
+  background: none;
+  border: none;
+  color: #dc3545;
+  font-family: inherit;
+  font-size: 1.1rem;
+  cursor: pointer;
+  padding: 0 1rem;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  font-weight: 500;
+}
+
+.nav-button-logout:hover {
+  color: #a71d2a;
+}
+
+/* "Kayıt Ol" butonu gibi özel linkler için */
+.special-link {
+  background-color: #007bff;
+  color: white !important; /* Yüksek öncelik */
+  padding: 8px 20px !important;
+  border-radius: 5px;
+  margin: auto 1rem;
+  height: auto;
+}
+
+.special-link:hover {
+  background-color: #0056b3;
+  border-bottom: none;
+}

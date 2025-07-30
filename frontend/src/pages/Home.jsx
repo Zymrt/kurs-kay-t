@@ -1,5 +1,5 @@
-import React from 'react';
-import CourseList from '../components/Courses/CourseList';
+import React from "react";
+import CourseList from "./Courses/CourseList";
 
 function Home() {
   return (
