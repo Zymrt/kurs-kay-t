@@ -27,12 +27,10 @@ const DashboardPage = () => {
     }
   }, []);
 
-  // Bileşen ilk yüklendiğinde başvuruları çek
   useEffect(() => {
     fetchMyEnrollments();
   }, [fetchMyEnrollments]);
 
-  // Başvuru durumuna göre stil döndüren yardımcı bir fonksiyon
   const getStatusClass = (status) => {
     switch (status) {
       case "approved":

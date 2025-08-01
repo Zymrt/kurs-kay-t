@@ -1,112 +1,224 @@
-/* src/Navbar.css */
+.navbar-wrapper {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  width: 100%;
+  background-color: #fff;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.top-bar {
+  height: 10px;
+  background-color: #0d2d52;
+}
+
+.top-bar {
+  height: 10px;
+  background-color: #0d2d52;
+}
 
 .navbar {
-  background-color: #ffffff;
-  height: 80px;
+  height: 90px;
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 1.1rem;
-  position: sticky;
-  top: 0;
-  z-index: 999;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  font-size: 1rem;
 }
 
 .navbar-container {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  height: 80px;
+  height: 100%;
   width: 100%;
-  max-width: 1300px;
-  padding: 0 24px;
+  max-width: 1600px;
+  padding: 0 50px;
 }
 
+/* Sol Taraf */
 .navbar-brand {
   display: flex;
   align-items: center;
   text-decoration: none;
-  cursor: pointer;
 }
 
 .navbar-logo {
-  height: 45px;
-  margin-right: 10px;
+  height: 60px;
+  margin-right: 15px;
 }
 
-.navbar-title {
-  color: #333;
-  font-weight: 700;
-  font-size: 1.2rem;
-  letter-spacing: 1px;
-  display: block; /* Mobil için gizleme ayarı yapılabilir */
-}
-
-.nav-menu {
+.brand-text {
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  color: #555;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.nav-menu-center {
+  display: flex; /* İçindeki <li> elemanlarını yatayda hizalamak için */
+  justify-content: center; /* Genişleyen alanın tam ortasına yerleşmesini sağlar */
+  align-items: center; /* Dikey olarak da ortalamak için */
+  flex-grow: 1; /* SİHİRLİ KURAL: Kalan tüm yatay boşluğu bu eleman kaplasın! */
+
   list-style: none;
-  text-align: center;
+  gap: 25px;
   margin: 0;
   padding: 0;
+  height: 100%; /* Dikey ortalama için tam yüksekliği alması önemli */
 }
 
-.nav-item {
-  height: 80px;
+.navbar-brand,
+.nav-right-section {
+  flex-shrink: 0; /* Bu elemanların asla küçülmemesini sağlar */
 }
 
-.nav-link {
-  color: #555;
-  display: flex;
-  align-items: center;
+.nav-menu-center a {
   text-decoration: none;
-  padding: 0 1rem;
-  height: 100%;
-  transition: all 0.2s ease-in-out;
+  color: #0d2d52;
+  font-weight: 500;
+  padding: 5px 0;
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s ease;
 }
 
-.nav-link:hover {
+.nav-menu-center a:hover,
+.nav-menu-center a.active {
   color: #007bff;
-  border-bottom: 4px solid #007bff;
+  border-bottom: 2px solid #007bff;
 }
 
-/* NavLink'in aktif olduğunda alacağı stil */
-.nav-link.active {
-  color: #007bff;
-  border-bottom: 4px solid #007bff;
-  font-weight: 600;
-}
-
-.nav-button-logout {
-  background: none;
-  border: none;
-  color: #dc3545;
-  font-family: inherit;
-  font-size: 1.1rem;
-  cursor: pointer;
-  padding: 0 1rem;
-  height: 100%;
+/* Sağ Taraf */
+.nav-right-section {
   display: flex;
   align-items: center;
+  gap: 20px;
+}
+
+.action-icons {
+  display: flex;
+  gap: 15px;
+  font-size: 1.5rem;
+  color: #888;
+}
+
+.action-icons .icon {
+  cursor: pointer;
+  transition: color 0.2s;
+}
+.action-icons .icon:hover {
+  color: #007bff;
+}
+.action-icons .icon:first-child {
+  color: #007bff;
+}
+
+.ataturk-logo {
+  height: 80px;
+  border-left: 1px solid #eee;
+  padding-left: 20px;
+}
+
+.nav-menu-user {
+  display: flex;
+  list-style: none;
+  gap: 15px;
+  margin: 0;
+  padding: 0;
+  align-items: center;
+}
+
+.nav-menu-user a {
+  text-decoration: none;
+  color: #333;
   font-weight: 500;
 }
-
-.nav-button-logout:hover {
-  color: #a71d2a;
+.nav-menu-user a:hover {
+  color: #007bff;
 }
 
-/* "Kayıt Ol" butonu gibi özel linkler için */
-.special-link {
+.logout-button,
+.register-link {
   background-color: #007bff;
-  color: white !important; /* Yüksek öncelik */
-  padding: 8px 20px !important;
+  color: white;
+  padding: 8px 16px;
   border-radius: 5px;
-  margin: auto 1rem;
-  height: auto;
+  border: none;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 500;
+  text-decoration: none;
+}
+.logout-button {
+  background-color: #dc3545;
+}
+.logout-button:hover {
+  background-color: #c82333;
+}
+.register-link:hover {
+  background-color: #0056b3;
 }
 
-.special-link:hover {
-  background-color: #0056b3;
-  border-bottom: none;
+/* Dikey Sosyal Medya Linkleri */
+.social-links {
+  position: fixed;
+  top: 50%;
+  right: 0;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  background-color: rgba(255, 255, 255, 0.8);
+  padding: 10px 5px;
+  border-radius: 10px 0 0 10px;
+  box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
+}
+
+.social-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  text-decoration: none;
+  font-family: sans-serif;
+  font-weight: bold;
+}
+.social-icon.facebook {
+  background-color: #3b5998;
+}
+.social-icon.twitter {
+  background-color: #00acee;
+}
+.social-icon.instagram {
+  background-color: #3f729b;
+}
+.social-icon.youtube {
+  background-color: #fff;
+}
+
+@media (max-width: 1200px) {
+  .nav-menu-center,
+  .brand-text span:first-child {
+    display: none;
+  }
+}
+@media (max-width: 768px) {
+  .navbar-container {
+    padding: 0 20px;
+  }
+  .ataturk-logo,
+  .navbar-title,
+  .social-links {
+    display: none;
+  }
+}
+
+.icon:hover {
+  stroke: #007bff; /* Üzerine gelinceki renk */
+}
+.phone-icon {
+  stroke: #007bff;
 }
