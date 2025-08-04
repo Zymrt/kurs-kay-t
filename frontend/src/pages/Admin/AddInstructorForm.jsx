@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { fetchAPI } from "../../utils/api";
 
-const AddInstructorForm = () => {
+const AddInstructorForm = ({ onInstructorAdded }) => {
+  // onInstructorAdded prop'unu alıyoruz
   const [name, setName] = useState("");
   const [specialty, setSpecialty] = useState("");
   const [bio, setBio] = useState("");
@@ -21,9 +22,11 @@ const AddInstructorForm = () => {
       setName("");
       setSpecialty("");
       setBio("");
-      // TODO: Eğitmen listesini güncellemeyi tetikle
+
+      // Başarılı ekleme sonrası AdminPage'e haber veriyoruz.
+      if (onInstructorAdded) onInstructorAdded();
     } catch (error) {
-      setMessage(error.message || "Bir hata oluştu.");
+      setMessage(error.message || "Eğitmen eklenemedi.");
       setIsError(true);
     } finally {
       setIsLoading(false);
@@ -32,6 +35,7 @@ const AddInstructorForm = () => {
 
   return (
     <form onSubmit={handleSubmit} className="admin-form">
+      {/* JSX KODU AYNI KALIYOR */}
       <div className="form-group">
         <label htmlFor="instructor-name">Eğitmen Adı Soyadı</label>
         <input

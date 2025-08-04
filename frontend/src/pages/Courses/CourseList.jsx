@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react"; // <-- DÜZELTİLMİŞ SATIR
 import { Link } from "react-router-dom";
 import { fetchAPI } from "../../utils/api";
-// import './CourseList.css';
+import "./CourseList.css";
 
 const CourseList = () => {
   const [courses, setCourses] = useState([]);
@@ -36,35 +36,47 @@ const CourseList = () => {
   }
 
   return (
-    <div className="courses-container">
-      <h1>Tüm Dersler</h1>
+    <div className="course-list-page">
+      <h1>Tüm Kurslar</h1>
 
-      {courses.length === 0 ? (
-        <div className="no-courses-message">
-          <p>Şu anda gösterilecek ders bulunmamaktadır.</p>
-        </div>
-      ) : (
-        <div className="courses-grid">
-          {courses.map((course) => (
-            <div key={course.id} className="course-card">
-              <h3>{course.title}</h3>
-              <p className="course-category">Kategori: {course.category}</p>
-              <p className="course-description">{course.description}</p>
-              <div className="course-instructor">
-                <strong>Eğitmen:</strong>{" "}
-                {course.instructor?.name || "Belirtilmemiş"}
+      {loading && <p>Yükleniyor...</p>}
+      {error && <p className="error-message">{error}</p>}
+
+      {!loading && !error && (
+        <div className="course-grid">
+          {courses.length === 0 ? (
+            <p>Gösterilecek ders bulunmamaktadır.</p>
+          ) : (
+            courses.map((course) => (
+              <div key={course.id} className="course-card">
+                <img
+                  src={`${process.env.REACT_APP_BACKEND_URL}${course.image_url}`}
+                  alt={course.title}
+                  className="course-card-image"
+                />
+                <div className="course-card-content">
+                  <span className="course-card-category">
+                    {course.category}
+                  </span>
+                  <h3 className="course-card-title">{course.title}</h3>
+                  <p className="course-card-instructor">
+                    Eğitmen: {course.instructor?.name || "Belirtilmemiş"}
+                  </p>
+                  <div className="course-card-meta">
+                    <span className="capacity">
+                      Kontenjan: {course.enrolled_students} / {course.capacity}
+                    </span>
+                  </div>
+                  <Link
+                    to={`/course/${course.id}`}
+                    className="course-card-button"
+                  >
+                    İncele
+                  </Link>
+                </div>
               </div>
-              <div className="course-meta">
-                <span>
-                  <strong>Kapasite:</strong> {course.enrolled_students} /{" "}
-                  {course.capacity}
-                </span>
-              </div>
-              <Link to={`/course/${course.id}`} className="details-button">
-                Detayları Gör
-              </Link>
-            </div>
-          ))}
+            ))
+          )}
         </div>
       )}
     </div>

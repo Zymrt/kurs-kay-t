@@ -1,0 +1,93 @@
+/* src/pages/Courses/CourseList.css */
+.course-list-page {
+  max-width: 1200px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+}
+
+.course-list-page h1 {
+  text-align: center;
+  margin-bottom: 2rem;
+  font-size: 2.5rem;
+}
+
+.course-grid {
+  display: grid;
+  /* 300px'den küçük olmayan, esnek genişlikte sütunlar oluştur */
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 2rem; /* Kartlar arası boşluk */
+}
+
+.course-card {
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  overflow: hidden; /* Resmin köşelerini yuvarlatmak için */
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.course-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+}
+
+.course-card-image {
+  width: 100%;
+  height: 180px;
+  object-fit: cover; /* Resmin orantısını bozmadan kaplamasını sağlar */
+}
+
+.course-card-content {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1; /* İçeriğin kartın kalan boşluğunu doldurmasını sağlar */
+}
+
+.course-card-category {
+  background-color: #e0e7ff;
+  color: #4338ca;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  align-self: flex-start; /* Kendini sola yasla */
+  margin-bottom: 0.75rem;
+}
+
+.course-card-title {
+  margin: 0 0 0.5rem;
+  font-size: 1.25rem;
+}
+
+.course-card-instructor {
+  color: #6b7280;
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+}
+
+.course-card-meta {
+  margin-top: auto; /* Kendini en alta it */
+  padding-top: 1rem;
+  border-top: 1px solid #f3f4f6;
+  font-size: 0.9rem;
+}
+
+.course-card-button {
+  display: block;
+  margin-top: 1rem;
+  padding: 12px;
+  background-color: #0d2d52;
+  color: white;
+  text-align: center;
+  text-decoration: none;
+  border-radius: 8px;
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
+
+.course-card-button:hover {
+  background-color: #0056b3;
+}

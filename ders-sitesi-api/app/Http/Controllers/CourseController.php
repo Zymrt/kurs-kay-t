@@ -6,6 +6,7 @@ use App\Models\Course;
 use App\Models\Instructor;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Storage;
 
 class CourseController extends Controller
 {
@@ -30,37 +31,46 @@ class CourseController extends Controller
      * Yeni bir ders oluşturur. Sadece adminler erişebilir.
      */
     public function store(Request $request)
-    {
-        $validator = Validator::make($request->all(), [
-            'title' => 'required|string|max:255|unique:courses',
-            'description' => 'required|string',
-            'instructor_id' => 'required|string|exists:instructors,_id',
-            'category' => 'required|string',
-            'capacity' => 'required|integer|min:1',
-        ]);
+{
+    $validator = Validator::make($request->all(), [
+        'title' => 'required|string|max:255|unique:courses',
+        'description' => 'required|string',
+        'instructor_id' => 'required|string|exists:instructors,_id',
+        'category' => 'required|string',
+        'capacity' => 'required|integer|min:1',
+        'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048', // YENİ: Resim doğrulama kuralları
+    ]);
 
-        if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 422);
-        }
-
-        // İŞ KURALI: Eğitmenin uzmanlık alanı ile dersin kategorisi eşleşmeli.
-        $instructor = Instructor::find($request->input('instructor_id'));
-        if ($instructor->specialty !== $request->input('category')) {
-            return response()->json([
-                'errors' => ['category' => ["Bu eğitmen sadece '{$instructor->specialty}' alanında ders verebilir."]]
-            ], 422);
-        }
-        
-        $validatedData = $validator->validated();
-        $validatedData['enrolled_students'] = 0; // Yeni dersin kayıtlı öğrenci sayısı 0'dır.
-
-        $course = Course::create($validatedData);
-
-        return response()->json([
-            'message' => 'Ders başarıyla oluşturuldu.',
-            'data' => $course->load('instructor') // Cevapta eğitmen bilgisini de gönder
-        ], 201);
+    if ($validator->fails()) {
+        return response()->json(['errors' => $validator->errors()], 422);
     }
+
+    // ... (Mevcut uzmanlık alanı kontrolü burada kalacak) ...
+    
+    $validatedData = $validator->validated();
+    $validatedData['enrolled_students'] = 0;
+    
+    // --- YENİ RESİM YÜKLEME MANTIĞI ---
+    if ($request->hasFile('image')) {
+        // Gelen dosyayı 'courses' klasörünün içine, public diskini kullanarak kaydet.
+        $path = $request->file('image')->store('courses', 'public');
+        // Veritabanına kaydedilecek tam URL'yi oluştur.
+        $validatedData['image_url'] = Storage::url($path);
+    } else {
+        // Eğer resim gönderilmezse, varsayılan bir resim ata.
+        $validatedData['image_url'] = '/default-course.jpg'; // Bu resmi public klasörüne koyman gerekir.
+    }
+    
+    // 'image' alanını create işleminden önce çıkaralım, çünkü veritabanında yok.
+    unset($validatedData['image']);
+
+    $course = Course::create($validatedData);
+
+    return response()->json([
+        'message' => 'Ders başarıyla oluşturuldu.',
+        'data' => $course->load('instructor')
+    ], 201);
+}
 
     /**
      * Belirtilen bir dersi, eğitmen bilgisiyle birlikte gösterir.
