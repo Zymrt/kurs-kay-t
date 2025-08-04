@@ -1,22 +1,103 @@
-.login-container {
-    max-width: 400px;
-    margin: 40px auto;
-    padding: 30px;
-    background: white;
-    border-radius: 8px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-    text-align: center;
+.auth-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 80vh;
+  padding: 20px;
 }
 
-.login-container h2 {
-    margin-bottom: 20px;
+.auth-container {
+  width: 100%;
+  max-width: 400px;
+  padding: 40px 30px;
+  background-color: #ffffff;
+  border-radius: 16px;
+  box-shadow: var(--box-shadow);
+  text-align: center;
 }
 
-.error-message {
-    color: #dc3545;
-    margin-bottom: 15px;
+.auth-container h2 {
+  margin-top: 0;
+  margin-bottom: 30px;
+  font-weight: 600;
+  color: #333;
+}
+
+.input-group {
+  position: relative;
+  margin-bottom: 25px;
+  text-align: left;
+}
+
+.input-group i {
+  position: absolute;
+  left: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #aaa;
+}
+
+.input-group input {
+  width: 100%;
+  padding: 12px 15px 12px 40px; /* İkon için solda boşluk */
+  border: 1px solid #ddd;
+  border-radius: var(--border-radius);
+  background-color: var(--secondary-color);
+  font-family: 'Poppins', sans-serif;
+  font-size: 1rem;
+  transition: border-color 0.3s;
+}
+
+.input-group input:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
+}
+
+.auth-button {
+  width: 100%;
+  padding: 12px;
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: var(--border-radius);
+  font-size: 1.1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  margin-top: 10px;
+}
+
+.auth-button:hover {
+  background-color: var(--primary-hover-color);
+}
+
+.auth-button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
 }
 
 .form-footer {
-    margin-top: 20px;
+  margin-top: 20px;
+  font-size: 0.9rem;
+}
+
+.form-footer a {
+  color: var(--primary-color);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.form-footer a:hover {
+  text-decoration: underline;
+}
+
+.error-message {
+  color: #e74c3c;
+  background-color: rgba(231, 76, 60, 0.1);
+  padding: 10px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  font-size: 0.9rem;
+  border: 1px solid rgba(231, 76, 60, 0.2);
 }

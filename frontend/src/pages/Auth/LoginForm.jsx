@@ -46,40 +46,44 @@ function LoginForm() {
   };
 
   return (
-    <div className="login-container">
-      <h2>Giriş Yap</h2>
+    <div className="auth-wrapper">
+    <div className="auth-container">
+      <h2>Kullanıcı Girişi</h2>
       <form onSubmit={handleSubmit}>
         {error && <p className="error-message">{error}</p>}
-        <div className="form-group">
-          <label htmlFor="email">E-posta</label>
+        
+        <div className="input-group">
+          <i className="fas fa-envelope"></i> {/* FontAwesome ikonları için */}
           <input
             type="email"
-            id="email"
+            placeholder="E-posta"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
           />
         </div>
-        <div className="form-group">
-          <label htmlFor="password">Şifre</label>
+        
+        <div className="input-group">
+          <i className="fas fa-lock"></i> {/* FontAwesome ikonları için */}
           <input
             type="password"
-            id="password"
+            placeholder="Şifre"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
           />
         </div>
-        <button type="submit" className="btn" disabled={loading}>
-          {loading ? "Giriş Yapılıyor..." : "Giriş Yap"}
+        
+        <button type="submit" className="auth-button" disabled={loading}>
+          {loading ? "Giriş Yapılıyor..." : "GİRİŞ"}
         </button>
       </form>
       <div className="form-footer">
-        <p>
-          Hesabın yok mu? <Link to="/register">Kayıt Ol</Link>
-        </p>
+        <p>Hesabın yok mu? <Link to="/register">Kayıt Ol</Link></p>
+        <p style={{marginTop: '10px'}}><a href="#">Kullanıcı Adı ve Şifre Unuttum</a></p>
       </div>
     </div>
+  </div>
   );
 }
 

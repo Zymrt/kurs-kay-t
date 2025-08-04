@@ -1,24 +1,24 @@
+/* Google Fonts'tan Poppins fontunu import et */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+:root {
+  --primary-color: #ff6f00; /* Ana Yeşil Renk */
+  --primary-hover-color: #ff6f00; /* Yeşil Hover */
+  --secondary-color: #f4f4f4; /* Açık Gri Arkaplan */
+  --text-color: #333;
+  --border-radius: 25px; /* Yuvarlak kenarlar için */
+  --box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
+  font-family: 'Poppins', sans-serif; /* Projenin ana fontu */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: #f4f7f6;
-  color: #333;
+  background-color: #f7f9fc; /* Genel sayfa arkaplanı */
+  color: var(--text-color);
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
-}
-
-a {
-  text-decoration: none;
-  color: #007bff;
-}
-
-a:hover {
-  text-decoration: underline;
+* {
+  box-sizing: border-box;
 }
