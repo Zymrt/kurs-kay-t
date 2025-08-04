@@ -17,6 +17,33 @@ body {
   -moz-osx-font-smoothing: grayscale;
   background-color: #f7f9fc; /* Genel sayfa arkaplanı */
   color: var(--text-color);
+  margin: 0;
+  font-family: 'Poppins', sans-serif;
+  background-color: #f7f9fc;
+  color: var(--text-color);
+  position: relative; /* Pseudo-element'i konumlandırmak için gerekli */
+  z-index: 1; /* İçeriğin filigranın üstünde kalmasını sağlar */
+}
+body::before {
+  content: '';
+  position: fixed; /* Sayfa kaysa bile sabit kalır */
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  
+  background-image: url('https://mezitli.bel.tr/wp-content/uploads/2020/07/mezbellogo-1.png');
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-size: 50%; /* Boyutunu buradan ayarla */
+
+  /* EN ÖNEMLİ KISIM: Opaklık ve Renk */
+  opacity: 0.08; /* Filigran ne kadar soluk olacak? 0.05 ile 0.1 arası idealdir */
+  
+  /* İsteğe Bağlı: Logoyu gri tona çevirme */
+  filter: grayscale(100%);
+  
+  z-index: -1; /* Bu katmanın diğer tüm içeriklerin ARKASINDA kalmasını sağlar */
 }
 
 * {
