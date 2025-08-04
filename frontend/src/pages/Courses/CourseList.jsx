@@ -71,7 +71,7 @@ const CourseList = () => {
                     to={`/course/${course.id}`}
                     className="course-card-button"
                   >
-                    İncele
+                    BAŞVUR
                   </Link>
                 </div>
               </div>
