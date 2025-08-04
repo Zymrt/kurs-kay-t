@@ -1,58 +1,65 @@
-import React, { useState, useEffect, useCallback } from "react";
-import { fetchAPI } from "../../utils/api"; // Merkezi API fonksiyonumuzu kullanıyoruz
-// import { AuthContext } from '../../App'; // Artık buna ihtiyacımız yok
+import React, { useState, useEffect } from 'react';
+import { fetchAPI } from '../../utils/api'; // fetchAPI yardımcısını import ediyoruz
 
 const MyCourses = () => {
-  // State tanımlamaları
-  const [enrollments, setEnrollments] = useState([]);
+  const [myCourses, setMyCourses] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-  // Kullanıcının kendi başvurularını API'den çekme
-  const fetchMyEnrollments = useCallback(async () => {
-    setLoading(true);
-    try {
-      // /my-enrollments adresi, backend'de giriş yapmış kullanıcının
-      // token'ına göre doğru kayıtları döndürecektir.
-      const data = await fetchAPI("/my-enrollments");
-      setEnrollments(data.data || data);
-    } catch (err) {
-      setError("Dersleriniz yüklenirken bir hata oluştu.");
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+  const [error, setError] = useState('');
 
   useEffect(() => {
-    fetchMyEnrollments();
-  }, [fetchMyEnrollments]);
+    const getMyCourses = async () => {
+      try {
+        // Bu endpoint'in kullanıcıya özel kursları döndürdüğünü varsayıyoruz.
+        // Bu korumalı bir rota olduğu için fetchAPI token'ı otomatik ekleyecektir.
+        const data = await fetchAPI('/my-courses'); // API endpoint: GET /api/my-courses
+        setMyCourses(data.data || data);
+      } catch (err) {
+        setError('Kurslarınız yüklenirken bir hata oluştu.');
+        console.error("Kurslarım yüklenemedi:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    getMyCourses();
+  }, []);
+  
+  const handleUnenroll = async (courseId) => {
+    if (window.confirm("Bu kurstan ayrılmak istediğinize emin misiniz?")) {
+        try {
+            const response = await fetchAPI(`/courses/${courseId}/unenroll`, 'POST');
+            alert(response.message || 'Kurstan başarıyla ayrıldınız.');
+            // Listeyi anında güncelle
+            setMyCourses(prevCourses => prevCourses.filter(course => course.id !== courseId));
+        } catch (err) {
+            alert(err.message || 'Kurstan ayrılırken bir hata oluştu.');
+        }
+    }
+  };
 
-  if (loading) return <p>Dersleriniz yükleniyor...</p>;
-  if (error) return <p className="error-message">{error}</p>;
+  if (loading) return <div className="loading">Kurslarım Yükleniyor...</div>;
+  if (error) return <div className="error-message">{error}</div>;
 
   return (
-    <div className="my-courses-container">
-      <h1>Kayıtlı Olduğum Dersler</h1>
-
-      {enrollments.length === 0 ? (
-        <p>Henüz herhangi bir derse kayıtlı değilsiniz.</p>
-      ) : (
-        <div className="courses-grid">
-          {enrollments.map((enrollment) => (
-            <div key={enrollment.id} className="course-card">
-              <h3>{enrollment.course?.title || "Bilinmeyen Ders"}</h3>
-              <p>Eğitmen: {enrollment.course?.instructor?.name || "N/A"}</p>
-              <p>
-                Durum:
-                <span className={`status-badge status-${enrollment.status}`}>
-                  {enrollment.status}
-                </span>
-              </p>
+    <div className="my-courses-page">
+      <h1>Katıldığım Kurslar</h1>
+      <div className="course-grid">
+        {myCourses.length > 0 ? (
+          myCourses.map(course => (
+            <div key={course.id} className="course-card">
+              <h3>{course.title}</h3>
+              <p>{course.description}</p>
+              <div className="course-meta">
+                 <span>Eğitmen: {course.instructor?.name || 'Belirtilmemiş'}</span>
+              </div>
+              <button onClick={() => handleUnenroll(course.id)} className="btn btn-delete">
+                  Kurstan Ayrıl
+              </button>
             </div>
-          ))}
-        </div>
-      )}
+          ))
+        ) : (
+          <p>Henüz hiçbir kursa kayıtlı değilsiniz. <a href="/courses">Tüm kursları</a> inceleyebilirsiniz.</p>
+        )}
+      </div>
     </div>
   );
 };
