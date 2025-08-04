@@ -72,7 +72,7 @@ function Navbar() {
 
           <ul className="nav-menu-center">
             <li>
-              <NavLink to="/courses">KURS MERKEZLERİ</NavLink>
+              <NavLink to="/courses">KURS KAYIT PANELİ</NavLink>
             </li>
             {/* Buraya gelecekte "Hizmetler", "İletişim" gibi statik linkler eklenebilir */}
           </ul>

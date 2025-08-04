@@ -47,63 +47,36 @@ function RegisterForm() {
   };
 
   return (
-    <div className="login-container">
-      {" "}
-      {/* login-container stilini kullanabiliriz */}
+    <div className="auth-wrapper">
+    <div className="auth-container">
       <h2>Kayıt Ol</h2>
       <form onSubmit={handleSubmit}>
         {error && <p className="error-message">{error}</p>}
-        <div className="form-group">
-          <label htmlFor="name">İsim Soyisim</label>
-          <input
-            type="text"
-            id="name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            required
-          />
+        <div className="input-group">
+          <i className="fas fa-user"></i>
+          <input type="text" placeholder="İsim Soyisim" value={name} onChange={(e) => setName(e.target.value)} required />
         </div>
-        <div className="form-group">
-          <label htmlFor="email">E-posta</label>
-          <input
-            type="email"
-            id="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
+        <div className="input-group">
+          <i className="fas fa-envelope"></i>
+          <input type="email" placeholder="E-posta" value={email} onChange={(e) => setEmail(e.target.value)} required />
         </div>
-        <div className="form-group">
-          <label htmlFor="password">Şifre</label>
-          <input
-            type="password"
-            id="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
+        <div className="input-group">
+          <i className="fas fa-lock"></i>
+          <input type="password" placeholder="Şifre" value={password} onChange={(e) => setPassword(e.target.value)} required />
         </div>
-        {/* Şifre onayı alanı */}
-        <div className="form-group">
-          <label htmlFor="password_confirmation">Şifre Tekrar</label>
-          <input
-            type="password"
-            id="password_confirmation"
-            value={passwordConfirmation}
-            onChange={(e) => setPasswordConfirmation(e.target.value)}
-            required
-          />
+        <div className="input-group">
+          <i className="fas fa-lock"></i>
+          <input type="password" placeholder="Şifre Tekrar" value={passwordConfirmation} onChange={(e) => setPasswordConfirmation(e.target.value)} required />
         </div>
-        <button type="submit" className="btn" disabled={loading}>
+        <button type="submit" className="auth-button" disabled={loading}>
           {loading ? "Kayıt Olunuyor..." : "Kayıt Ol"}
         </button>
       </form>
       <div className="form-footer">
-        <p>
-          Zaten bir hesabın var mı? <Link to="/login">Giriş Yap</Link>
-        </p>
+        <p>Zaten bir hesabın var mı? <Link to="/login">Giriş Yap</Link></p>
       </div>
     </div>
+  </div>
   );
 }
 
