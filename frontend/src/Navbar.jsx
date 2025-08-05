@@ -1,14 +1,14 @@
 import React, { useContext } from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
-import { AuthContext } from './App'; // App.jsx'ten AuthContext'i import et
-import './Navbar.css'; // Navbar için özel CSS dosyasını import et
+import { AuthContext } from './App';
+import './Navbar.css';
 
 function Navbar() {
   const { isAuthenticated, user, logout } = useContext(AuthContext);
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    logout(); // Context'teki logout fonksiyonunu çağırır
+    logout();
     navigate('/');
   };
 
@@ -19,7 +19,7 @@ function Navbar() {
         <div className="navbar-container">
           
           {/* --- SOL TARAF: LOGO VE MARKA ADI --- */}
-          <Link to="/" className="navbar-brand">
+          <Link to="/courses" className="navbar-brand">
             <img src="https://mezitli.bel.tr/wp-content/uploads/2020/07/mezbellogo-1.png" alt="Belediye Logosu" className="navbar-logo" />
             <div className="brand-text">
               <span>MEZİTLİ BELEDİYESİ</span>
@@ -29,7 +29,11 @@ function Navbar() {
 
           {/* --- ORTA KISIM: NAVİGASYON LİNKLERİ --- */}
           <ul className="nav-menu-center">
-            <li><NavLink to="/" className={({ isActive }) => isActive ? "active" : ""}>Ana Sayfa</NavLink></li>
+            <li>
+              <a href="https://mezitli.bel.tr/" target="_blank" rel="noopener noreferrer">
+                Ana Sayfa
+              </a>
+            </li>
             <li><NavLink to="/courses" className={({ isActive }) => isActive ? "active" : ""}>Tüm Kurslar</NavLink></li>
             {isAuthenticated && (
               <li><NavLink to="/my-courses" className={({ isActive }) => isActive ? "active" : ""}>Kurslarım</NavLink></li>
@@ -39,8 +43,26 @@ function Navbar() {
             )}
           </ul>
 
-          {/* --- SAĞ TARAF: KULLANICI İŞLEMLERİ VE ATATÜRK LOGOSU --- */}
+          {/* --- SAĞ TARAF: İKONLAR, ATATÜRK VE KULLANICI İŞLEMLERİ --- */}
           <div className="nav-right-section">
+            
+            {/* 1. SOSYAL MEDYA İKONLARI */}
+            <div className="social-icons-nav">
+               <a href="https://www.facebook.com/Mezitlibel" target="_blank" rel="noopener noreferrer" title="Facebook">
+                 <i className="fab fa-facebook-f"></i>
+               </a>
+               <a href="https://twitter.com/MezitliBel" target="_blank" rel="noopener noreferrer" title="Twitter">
+                 <i className="fab fa-twitter"></i>
+               </a>
+               <a href="https://www.instagram.com/Mezitlibel" target="_blank" rel="noopener noreferrer" title="Instagram">
+                 <i className="fab fa-instagram"></i>
+               </a>
+            </div>
+
+            {/* 2. ATATÜRK LOGOSU */}
+            <img src="https://mezitli.bel.tr/wp-content/uploads/elementor/thumbs/ataturkbanner-p5cqm43v2khi30o2dx2vv9xpqyvj4ef97idtx88vr8.png" alt="Atatürk" className="ataturk-logo" />
+            
+            {/* 3. KULLANICI GİRİŞ/KAYIT/ÇIKIŞ BÖLÜMÜ (EN SAĞDA) */}
             <ul className="nav-menu-user">
               {isAuthenticated ? (
                 <>
@@ -54,7 +76,6 @@ function Navbar() {
                 </>
               )}
             </ul>
-            <img src="https://mezitli.bel.tr/wp-content/uploads/elementor/thumbs/ataturkbanner-p5cqm43v2khi30o2dx2vv9xpqyvj4ef97idtx88vr8.png" alt="Atatürk" className="ataturk-logo" />
           </div>
 
         </div>

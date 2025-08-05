@@ -8,6 +8,7 @@
 }
 
 .top-bar {
+  display: none; /* Bu satırı ekle */
   height: 10px;
   background-color: #0d2d52;
 }
@@ -221,4 +222,54 @@
 }
 .phone-icon {
   stroke: #007bff;
+}
+/* Navbar Sağ Taraf Sosyal Medya İkonları */
+.social-icons-nav {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding-left: 20px;
+  border-left: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.social-icons-nav a {
+  color: white;
+  font-size: 1.2rem; /* İkon boyutu */
+  transition: transform 0.2s, color 0.2s;
+}
+
+.social-icons-nav a:hover {
+  transform: scale(1.2);
+  color: #f0f0f0;
+}
+.nav-menu-user {
+  display: flex;
+  list-style: none;
+  gap: 15px;
+  margin: 0;
+  padding: 0;
+  align-items: center;
+
+  /* Bu satır, bu bölümün en sağa yaslanmasını sağlar */
+  margin-left: auto; 
+}
+
+/* Sosyal medya ikonları için de stillerin olduğundan emin ol */
+.social-icons-nav {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  /* İsteğe bağlı: Atatürk logosuyla arasına bir ayraç koymak için */
+  /* padding-right: 20px; */
+  /* border-right: 1px solid rgba(255, 255, 255, 0.3); */
+}
+
+.social-icons-nav a {
+  color: white;
+  font-size: 1.2rem;
+  transition: transform 0.2s;
+}
+
+.social-icons-nav a:hover {
+  transform: scale(1.2);
 }

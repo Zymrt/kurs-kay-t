@@ -1,51 +1,37 @@
-import React, { useState } from "react";
-import AddInstructorForm from "./AddInstructorForm.jsx";
-import ManageInstructors from "./ManageInstructors.jsx";
-import AddCourseForm from "./AddCourseForm.jsx";
-import ManageCoursesPage from "./ManageCoursesPage.jsx";
-import EnrollmentRequests from "./EnrollmentRequests.jsx";
-import "./AdminPanel.css";
+import React from 'react';
+import { NavLink, Outlet } from 'react-router-dom';
+import './AdminPanel.css'; // Yeni CSS dosyamızı import ediyoruz
 
 const AdminPage = () => {
-  // Bu state'ler, listelerin yenilenmesini tetiklemek için kullanılacak
-  const [refreshInstructorsKey, setRefreshInstructorsKey] = useState(0);
-  const [refreshCoursesKey, setRefreshCoursesKey] = useState(0);
-
   return (
-    <div className="admin-container">
-      <h1>Admin Yönetim Paneli</h1>
-      <div className="admin-layout">
-        <div className="form-column">
-          <section className="admin-section">
-            <h2>Yeni Eğitmen Ekle</h2>
-            {/* Eğitmen eklenince, refresh key'i değiştirerek listeyi yenile */}
-            <AddInstructorForm
-              onInstructorAdded={() => setRefreshInstructorsKey((k) => k + 1)}
-            />
-          </section>
-          <section className="admin-section">
-            <h2>Yeni Ders Ekle</h2>
-            {/* Ders eklenince, refresh key'i değiştirerek listeyi yenile */}
-            <AddCourseForm
-              onCourseAdded={() => setRefreshCoursesKey((k) => k + 1)}
-            />
-          </section>
-        </div>
-        <div className="list-column">
-          <section className="admin-section">
-            <h2>Mevcut Eğitmenler</h2>
-            <ManageInstructors refreshKey={refreshInstructorsKey} />
-          </section>
-          <section className="admin-section">
-            <h2>Mevcut Dersler</h2>
-            <ManageCoursesPage refreshKey={refreshCoursesKey} />
-          </section>
-        </div>
-      </div>
-      <section className="admin-section enrollment-section">
-        <h2>Onay Bekleyen Başvurular</h2>
-        <EnrollmentRequests />
-      </section>
+    <div className="admin-panel">
+      {/* Sol Taraftaki Navigasyon Menüsü */}
+      <aside className="admin-sidebar">
+        <h2>Yönetim Paneli</h2>
+        <ul className="admin-nav">
+          <li>
+            <NavLink to="/admin/dersleri-yonet" className={({ isActive }) => (isActive ? 'active' : '')}>
+              Dersleri Yönet
+            </NavLink>
+          </li>
+          <li>
+            <NavLink to="/admin/egitmenleri-yonet" className={({ isActive }) => (isActive ? 'active' : '')}>
+              Eğitmenleri Yönet
+            </NavLink>
+          </li>
+          <li>
+            <NavLink to="/admin/kayit-talepleri" className={({ isActive }) => (isActive ? 'active' : '')}>
+              Kayıt Talepleri
+            </NavLink>
+          </li>
+        </ul>
+      </aside>
+
+      {/* Sağ Tarafta Değişecek İçerik Alanı */}
+      <main className="admin-content">
+        <Outlet /> 
+        {/* Outlet, iç içe rotaların bileşenlerini burada render eder */}
+      </main>
     </div>
   );
 };
