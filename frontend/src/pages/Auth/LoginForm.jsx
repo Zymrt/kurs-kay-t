@@ -1,19 +1,16 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { useNavigate, Link } from "react-router-dom";
-// axios importuna artık ihtiyacımız yok.
-// AuthContext yerine localStorage kullanacağımız için onu da kaldırıyoruz.
-import "./Login.css";
+import { AuthContext } from "../../App";
 import { fetchAPI } from "../../utils/api";
+import "./Login.css";
 
 function LoginForm() {
-  // State'ler aynı kalıyor, bir de yükleme durumu ekleyelim
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false); // Kullanıcı deneyimi için
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-
-  // loginUser fonksiyonuna artık ihtiyacımız yok.
+  const { login } = useContext(AuthContext); // login fonksiyonunu context'ten al
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -21,25 +18,19 @@ function LoginForm() {
     setLoading(true);
 
     try {
-      const data = await fetchAPI("/auth/login", "POST", {
-        email,
-        password,
-      });
+      const data = await fetchAPI("/auth/login", "POST", { email, password });
+      
+      // Artık localStorage'a doğrudan yazmıyoruz.
+      // App'teki merkezi state'i güncelleyen fonksiyonu çağırıyoruz.
+      login(data);
 
-      localStorage.setItem("authToken", data.access_token);
-      localStorage.setItem("user", JSON.stringify(data.user));
-
-      // Rol kontrolünü bizim backend'in cevabına göre yap
       if (data.user.is_admin) {
         navigate("/admin");
       } else {
-        navigate("/courses");
+        navigate("/dashboard"); // Veya /courses
       }
     } catch (err) {
-      setError(
-        err.message || "Giriş başarısız. Lütfen bilgilerinizi kontrol edin."
-      );
-      console.error("Giriş hatası:", err);
+      setError(err.message || "Giriş başarısız.");
     } finally {
       setLoading(false);
     }
