@@ -6,15 +6,25 @@ use App\Http\Controllers\CourseController;
 use App\Http\Controllers\EnrollmentController;
 use App\Http\Controllers\InstructorController;
 
-/*
-|--------------------------------------------------------------------------
-| API Rotaları
-|--------------------------------------------------------------------------
-*/
 
-// =========================================================================
-//  BÖLÜM 1: HERKESE AÇIK ROTALAR (TOKEN GEREKMEZ)
-// =========================================================================
+use Illuminate\Support\Facades\DB;
+
+Route::get('/_health', fn() => ['ok' => true]);
+
+Route::get('/_dbping', function () {
+    try {
+        $client = DB::connection('mongodb')->getMongoClient();
+        $db = $client->selectDatabase(env('DB_DATABASE','kurs-kayit-db'));
+        $res = $db->command(['ping' => 1])->toArray();
+        return ['ok' => $res[0]->ok ?? null];
+    } catch (\Throwable $e) {
+        return response()->json(['err' => $e->getMessage()], 500);
+    }
+});
+
+
+
+
 
 Route::post('/auth/register', [AuthController::class, 'register']);
 Route::post('/auth/login', [AuthController::class, 'login']);

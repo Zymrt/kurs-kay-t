@@ -16,7 +16,7 @@ return [
     |
     */
 
-    'default' => env('DB_CONNECTION', 'sqlite'),
+    'default' => env('DB_CONNECTION', 'mongodb'),
 
     /*
     |--------------------------------------------------------------------------
@@ -113,19 +113,25 @@ return [
         ],
 
         'mongodb' => [
-        'driver'   => 'mongodb',
-        'host'     => env('DB_HOST', '127.0.0.1'),
-        'port'     => env('DB_PORT', 27017),
-        'database' => env('DB_DATABASE', 'kurs-kayit-db'),
-        'username' => env('DB_USERNAME', ''),
-        'password' => env('DB_PASSWORD', ''),
-        'options'  => [
-            // Gerekirse, kimlik doğrulama veritabanını burada belirtebilirsiniz.
-            // 'database' => env('DB_AUTHENTICATION_DATABASE', 'admin'),
-        ],
+    'driver'   => 'mongodb',
+    'dsn'      => env('DB_URI'), // .env'den DB_URI alır
+    'database' => env('DB_DATABASE', 'kurs-kayit-db'),
+
+    // Opsiyonel ek ayarlar (Compass'taki TLS ayarları ile uyumlu)
+    'options'  => [
+        'appname' => 'laravel',
+        //'tls' => true,
+        //'tlsAllowInvalidCertificates' => true,
+        //'tlsAllowInvalidHostnames' => true,
+        // Gerekirse:
+        // 'authSource' => 'admin',
+        // 'directConnection' => true
     ],
+],
 
     ],
+
+    
 
     /*
     |--------------------------------------------------------------------------

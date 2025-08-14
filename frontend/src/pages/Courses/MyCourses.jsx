@@ -1,65 +1,100 @@
-import React, { useState, useEffect } from 'react';
-import { fetchAPI } from '../../utils/api'; // fetchAPI yardımcısını import ediyoruz
+import React, { useState, useEffect } from "react";
+import { fetchAPI } from "../../utils/api";
+import { Link } from "react-router-dom"; // Link bileşenini import edelim
+// import './MyCourses.css'; // İsteğe bağlı olarak stil dosyası eklenebilir
 
 const MyCourses = () => {
-  const [myCourses, setMyCourses] = useState([]);
+  // 1. State'lerimiz: enrollments, loading ve error
+  const [enrollments, setEnrollments] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
+  const [error, setError] = useState(null); // String yerine null ile başlatmak daha standarttır
 
   useEffect(() => {
-    const getMyCourses = async () => {
+    const fetchMyEnrollments = async () => {
+      setLoading(true);
+      setError(null);
       try {
-        // Bu endpoint'in kullanıcıya özel kursları döndürdüğünü varsayıyoruz.
-        // Bu korumalı bir rota olduğu için fetchAPI token'ı otomatik ekleyecektir.
-        const data = await fetchAPI('/my-courses'); // API endpoint: GET /api/my-courses
-        setMyCourses(data.data || data);
+        const responseData = await fetchAPI("/my-enrollments");
+        setEnrollments(responseData.data || responseData || []);
       } catch (err) {
-        setError('Kurslarınız yüklenirken bir hata oluştu.');
+        setError("Kurslarınız yüklenirken bir hata oluştu.");
         console.error("Kurslarım yüklenemedi:", err);
       } finally {
         setLoading(false);
       }
     };
-    getMyCourses();
+    fetchMyEnrollments();
   }, []);
-  
-  const handleUnenroll = async (courseId) => {
-    if (window.confirm("Bu kurstan ayrılmak istediğinize emin misiniz?")) {
-        try {
-            const response = await fetchAPI(`/courses/${courseId}/unenroll`, 'POST');
-            alert(response.message || 'Kurstan başarıyla ayrıldınız.');
-            // Listeyi anında güncelle
-            setMyCourses(prevCourses => prevCourses.filter(course => course.id !== courseId));
-        } catch (err) {
-            alert(err.message || 'Kurstan ayrılırken bir hata oluştu.');
-        }
-    }
-  };
+
+  // 'Kurstan Ayrıl' işlevini şimdilik devre dışı bırakıyoruz, çünkü backend'de karşılığı yok.
+  // Gelecekte eklenebilir.
+  // const handleUnenroll = async (enrollmentId) => { ... }
 
   if (loading) return <div className="loading">Kurslarım Yükleniyor...</div>;
   if (error) return <div className="error-message">{error}</div>;
 
+  // 2. JSX kısmı: 'myCourses' yerine 'enrollments' state'ini kullanıyoruz.
   return (
     <div className="my-courses-page">
-      <h1>Katıldığım Kurslar</h1>
-      <div className="course-grid">
-        {myCourses.length > 0 ? (
-          myCourses.map(course => (
-            <div key={course.id} className="course-card">
-              <h3>{course.title}</h3>
-              <p>{course.description}</p>
-              <div className="course-meta">
-                 <span>Eğitmen: {course.instructor?.name || 'Belirtilmemiş'}</span>
+      <h1>Katıldığım Kurslar ve Başvurularım</h1>
+
+      {enrollments.length > 0 ? (
+        <div className="course-grid">
+          {" "}
+          {/* CourseList'tekiyle aynı stili kullanabiliriz */}
+          {enrollments.map((enrollment) =>
+            // Her bir 'enrollment' objesi bir başvuru/kayıttır
+            enrollment.course ? ( // Güvenlik kontrolü: course verisi var mı?
+              <div
+                key={enrollment.id || enrollment._id}
+                className="course-card"
+              >
+                {/* Ders bilgilerine enrollment.course objesi üzerinden ulaşıyoruz */}
+                <h3>{enrollment.course.title}</h3>
+                <p className="course-description">
+                  {enrollment.course.description}
+                </p>
+                <div className="course-meta">
+                  <span>
+                    Eğitmen:{" "}
+                    {enrollment.course.instructor?.name || "Belirtilmemiş"}
+                  </span>
+                </div>
+
+                {/* Başvuru durumunu gösteren bölüm */}
+                <div className="enrollment-status">
+                  <strong>Başvuru Durumu:</strong>
+                  <span className={`status-badge status-${enrollment.status}`}>
+                    {enrollment.status === "approved"
+                      ? "Onaylandı"
+                      : enrollment.status === "pending"
+                      ? "Onay Bekliyor"
+                      : "Reddedildi"}
+                  </span>
+                </div>
+
+                {/* Kurstan Ayrıl butonu, sadece onaylanmışsa görünebilir. 
+                    Bu özellik eklendiğinde yorum satırı kaldırılabilir. */}
+                {/* 
+                {enrollment.status === 'approved' && (
+                  <button
+                    onClick={() => handleUnenroll(enrollment.id)}
+                    className="btn btn-delete"
+                  >
+                    Kurstan Ayrıl
+                  </button>
+                )}
+                */}
               </div>
-              <button onClick={() => handleUnenroll(course.id)} className="btn btn-delete">
-                  Kurstan Ayrıl
-              </button>
-            </div>
-          ))
-        ) : (
-          <p>Henüz hiçbir kursa kayıtlı değilsiniz. <a href="/courses">Tüm kursları</a> inceleyebilirsiniz.</p>
-        )}
-      </div>
+            ) : null
+          )}
+        </div>
+      ) : (
+        <p>
+          Henüz hiçbir kursa kayıtlı değilsiniz veya başvuruda bulunmadınız.{" "}
+          <Link to="/courses">Tüm kursları inceleyebilirsiniz.</Link>
+        </p>
+      )}
     </div>
   );
 };

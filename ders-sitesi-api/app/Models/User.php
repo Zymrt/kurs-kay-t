@@ -2,31 +2,14 @@
 
 namespace App\Models;
 
-// Gerekli sınıfları ve arayüzleri 'use' ile çağırıyoruz
-use MongoDB\Laravel\Eloquent\Model;
-use Illuminate\Auth\Authenticatable;
-use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
-use Illuminate\Notifications\Notifiable;
-use Tymon\JWTAuth\Contracts\JWTSubject; // JWT için en önemli kısım bu
+use MongoDB\Laravel\Auth\User as Authenticatable;
+use Tymon\JWTAuth\Contracts\JWTSubject;
 
-class User extends Model implements AuthenticatableContract, JWTSubject
+class User extends Authenticatable implements JWTSubject
 {
-    // Authenticatable ve Notifiable 'trait'lerini kullanıyoruz
-    use Authenticatable, Notifiable;
-
-    /**
-     * Veritabanı bağlantısı.
-     */
     protected $connection = 'mongodb';
-
-    /**
-     * Modelin ilişkili olduğu koleksiyon.
-     */
     protected $collection = 'users';
 
-    /**
-     * Toplu atama ile doldurulabilir alanlar.
-     */
     protected $fillable = [
         'name',
         'email',
@@ -34,39 +17,30 @@ class User extends Model implements AuthenticatableContract, JWTSubject
         'is_admin',
     ];
 
-    /**
-     * JSON'a çevrilirken gizlenmesi gereken alanlar.
-     */
     protected $hidden = [
         'password',
         'remember_token',
     ];
 
-    /**
-     * Otomatik tip dönüşümü yapılacak alanlar.
-     */
     protected $casts = [
         'is_admin' => 'boolean',
-        'password' => 'hashed', // Şifrenin otomatik hash'lenmesini sağlar
+        'password' => 'hashed',
     ];
 
-    // --- JWT İÇİN ZORUNLU METODLAR ---
-
-    /**
-     * JWT (JSON Web Token) için kullanıcı kimliğini (subject claim) alır.
-     * Bu genellikle kullanıcının birincil anahtarıdır (primary key).
-     */
     public function getJWTIdentifier()
     {
         return $this->getKey();
     }
 
-    /**
-     * JWT token'ına eklenecek özel 'claim'leri (ek bilgileri) döndürür.
-     * Boş bir dizi döndürmek, ekstra bir bilgi eklenmeyeceği anlamına gelir.
-     */
     public function getJWTCustomClaims()
     {
         return [];
     }
+
+    public function enrollments()
+    {
+    return $this->hasMany(Enrollment::class);
+    }
+
+    
 }
