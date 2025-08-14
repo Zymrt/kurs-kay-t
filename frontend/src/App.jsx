@@ -1,6 +1,10 @@
 import React, { useState, useEffect, createContext } from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 
+// Toast bildirimleri için gerekli importlar
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 // Ana Sayfalar ve Bileşenler
 import Navbar from "./Navbar";
 import HomePage from "./pages/Home.jsx";
@@ -23,16 +27,14 @@ export const AuthContext = createContext(null);
 
 // Korumalı Rota Yardımcı Bileşenleri
 const PrivateRoute = ({ children }) => {
-  const { isAuthenticated } = React.useContext(AuthContext);
-  // Yükleme devam ediyorsa bir şey gösterme veya bir yükleme göstergesi göster
-  if (React.useContext(AuthContext).loading) return null; 
+  const { isAuthenticated, loading } = React.useContext(AuthContext);
+  if (loading) return null; // Yükleme sırasında bir şey render etme
   return isAuthenticated ? children : <Navigate to="/login" />;
 };
 
 const AdminRoute = ({ children }) => {
-  const { isAuthenticated, user } = React.useContext(AuthContext);
-  // Yükleme devam ediyorsa bir şey gösterme
-  if (React.useContext(AuthContext).loading) return null;
+  const { isAuthenticated, user, loading } = React.useContext(AuthContext);
+  if (loading) return null; // Yükleme sırasında bir şey render etme
   return isAuthenticated && user?.is_admin ? children : <Navigate to="/" />;
 };
 
@@ -81,6 +83,20 @@ function App() {
     <AuthContext.Provider value={{ ...authState, login, logout }}>
       <Router>
         <div className="App">
+          {/* TOAST BİLDİRİMLERİ İÇİN KONTEYNER ARTIK DOĞRU YERDE VE ÇALIŞIR DURUMDA */}
+          <ToastContainer
+            position="bottom-right"
+            autoClose={4000}
+            hideProgressBar={false}
+            newestOnTop={false}
+            closeOnClick
+            rtl={false}
+            pauseOnFocusLoss
+            draggable
+            pauseOnHover
+            theme="colored"
+          />
+
           <Navbar />
           <main className="container">
             <Routes>
@@ -96,10 +112,7 @@ function App() {
 
               {/* === Admin Paneli ve İç İçe Rotaları === */}
               <Route path="/admin" element={<AdminRoute><AdminPage /></AdminRoute>}>
-                {/* /admin'e gidildiğinde varsayılan olarak bu sayfa açılsın */}
                 <Route index element={<Navigate to="dersleri-yonet" replace />} />
-
-                {/* Alt Rotalar */}
                 <Route path="dersleri-yonet" element={<ManageCoursesPage />} />
                 <Route path="egitmenleri-yonet" element={<ManageInstructors />} />
                 <Route path="kayit-talepleri" element={<EnrollmentRequests />} />
