@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { fetchAPI } from "../../utils/api";
-import { AuthContext } from "../../App"; // AuthContext'i import ediyoruz
-import { toast } from 'react-toastify'; // Toast bildirimleri için
+import { AuthContext } from "../../App"; // AuthContext importu
+import { toast } from 'react-toastify'; // react-toastify importu
 
 // Onay Kutusu (Confirm Dialog) Bileşeni
 const ConfirmDialog = ({ message, onConfirm, onCancel }) => (
@@ -18,19 +18,18 @@ const ConfirmDialog = ({ message, onConfirm, onCancel }) => (
   </div>
 );
 
-
 const CourseList = () => {
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const { user } = useContext(AuthContext); // localStorage yerine context'ten alıyoruz
+  const { user, isAuthenticated } = useContext(AuthContext); // user ve isAuthenticated'ı context'ten al
   const navigate = useNavigate();
 
-  // Silme onayı için state
   const [showConfirm, setShowConfirm] = useState(false);
-  const [courseToDelete, setCourseToDelete] = useState(null);
+  const [courseToAction, setCourseToAction] = useState(null);
 
   const getCourses = async () => {
+    setLoading(true); // Her çağırdığımızda yüklemeyi başlat
     try {
       const data = await fetchAPI("/courses");
       setCourses(data.data || data);
@@ -47,29 +46,41 @@ const CourseList = () => {
   }, []);
 
   const handleEnroll = async (courseId) => {
-    // ... (Bu fonksiyon aynı kalabilir) ...
+    if (!isAuthenticated) { // localStorage yerine context'teki isAuthenticated'ı kontrol et
+      toast.warn("Kursa katılmak için lütfen giriş yapınız.");
+      navigate("/login");
+      return;
+    }
+    try {
+      const response = await fetchAPI(`/enrollments/${courseId}`, "POST");
+      toast.success(response.message || "Başvurunuz başarıyla alındı!");
+    } catch (error) {
+      toast.error(error.message || "Başvuru yapılamadı.");
+    }
   };
-  
-  // SİLME İŞLEMLERİ
+
   const handleDeleteClick = (course) => {
-    setCourseToDelete(course);
+    setCourseToAction(course);
     setShowConfirm(true);
   };
   
   const handleConfirmDelete = async () => {
-    if (!courseToDelete) return;
-    
+    if (!courseToAction) return;
     try {
-      await fetchAPI(`/admin/courses/${courseToDelete.id}`, "DELETE");
-      toast.success(`'${courseToDelete.title}' kursu başarıyla silindi!`);
+      await fetchAPI(`/admin/courses/${courseToAction.id}`, "DELETE");
+      toast.success(`'${courseToAction.title}' kursu başarıyla silindi!`);
       setShowConfirm(false);
-      setCourseToDelete(null);
+      setCourseToAction(null);
       getCourses(); // Listeyi yenile
     } catch (error) {
       toast.error(error.message || "Kurs silinirken bir hata oluştu.");
       setShowConfirm(false);
-      setCourseToDelete(null);
+      setCourseToAction(null);
     }
+  };
+
+  const handleEditClick = (courseId) => {
+    navigate(`/admin/dersleri-yonet`, { state: { editCourseId: courseId } });
   };
 
   if (loading) return <div className="loading">Kurslar Yükleniyor...</div>;
@@ -79,7 +90,7 @@ const CourseList = () => {
     <>
       {showConfirm && (
         <ConfirmDialog 
-          message={`'${courseToDelete?.title}' adlı kursu silmek istediğinize emin misiniz? Bu işlem geri alınamaz.`}
+          message={`'${courseToAction?.title}' adlı kursu silmek istediğinize emin misiniz?`}
           onConfirm={handleConfirmDelete}
           onCancel={() => setShowConfirm(false)}
         />
@@ -91,34 +102,21 @@ const CourseList = () => {
           {courses.length > 0 ? (
             courses.map((course) => (
               <div key={course.id} className="course-card">
-                {/* <img src={course.image_url || 'default-image.png'} alt={course.title} className="course-image" /> */}
                 <h3>{course.title}</h3>
                 <p>{course.description}</p>
                 <div className="course-meta">
-                  <span>
-                    <i className="fas fa-user-tie"></i> {course.instructor?.name || "N/A"}
-                  </span>
-                  <span>
-                    <i className="fas fa-users"></i> {course.enrolled_students_count ?? 0} / {course.capacity}
-                  </span>
+                  <span><i className="fas fa-user-tie"></i> {course.instructor?.name || "N/A"}</span>
+                  <span><i className="fas fa-users"></i> {course.enrolled_students_count ?? 0} / {course.capacity}</span>
                 </div>
                 
-                {/* Kullanıcı ve Admin için farklı butonlar göster */}
-                {user ? (
-                  user.is_admin ? (
-                    // Admin Butonları
-                    <div className="admin-card-buttons">
-                      <button className="btn btn-edit">Düzenle</button>
-                      <button onClick={() => handleDeleteClick(course)} className="btn btn-delete">Sil</button>
-                    </div>
-                  ) : (
-                    // Kullanıcı Butonu
-                    <button onClick={() => handleEnroll(course.id)} className="btn btn-join">
-                      Kursa Katıl
-                    </button>
-                  )
+                {user?.is_admin ? (
+                  // Admin Butonları
+                  <div className="admin-card-buttons">
+                    <button onClick={() => handleEditClick(course.id)} className="btn btn-edit">Düzenle</button>
+                    <button onClick={() => handleDeleteClick(course)} className="btn btn-delete">Sil</button>
+                  </div>
                 ) : (
-                  // Giriş Yapmamış Kullanıcı Butonu
+                  // Kullanıcı ve Misafir Butonları
                   <button onClick={() => handleEnroll(course.id)} className="btn btn-join">
                     Kursa Katıl
                   </button>
