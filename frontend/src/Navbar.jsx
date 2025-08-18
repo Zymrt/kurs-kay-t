@@ -35,12 +35,20 @@ function Navbar() {
               </a>
             </li>
             <li><NavLink to="/courses" className={({ isActive }) => isActive ? "active" : ""}>Tüm Kurslar</NavLink></li>
-            {isAuthenticated && (
+            
+            {/* ==================== DEĞİŞİKLİK BURADA ==================== */}
+            
+            {/* Eğer kullanıcı giriş yapmışsa VE admin DEĞİLSE "Kurslarım" linkini göster */}
+            {isAuthenticated && !user?.is_admin && (
               <li><NavLink to="/my-courses" className={({ isActive }) => isActive ? "active" : ""}>Kurslarım</NavLink></li>
             )}
+
+            {/* Eğer kullanıcı giriş yapmışsa VE admin İSE "Admin Paneli" linkini göster */}
             {isAuthenticated && user?.is_admin && (
               <li><NavLink to="/admin" className={({ isActive }) => isActive ? "active" : ""}>Admin Paneli</NavLink></li>
             )}
+            
+            {/* ========================================================== */}
           </ul>
 
           {/* --- SAĞ TARAF: İKONLAR, ATATÜRK VE KULLANICI İŞLEMLERİ --- */}
