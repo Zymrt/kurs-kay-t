@@ -19,6 +19,7 @@ import AdminPage from "./pages/Admin/AdminPage.jsx";
 import ManageCoursesPage from "./pages/Admin/ManageCoursesPage.jsx";
 import ManageInstructors from "./pages/Admin/ManageInstructors.jsx";
 import EnrollmentRequests from "./pages/Admin/EnrollmentRequests.jsx";
+import EditCoursePage from './pages/Admin/EditCoursePage.jsx'; // YENİ IMPORT
 
 import "./App.css";
 
@@ -28,13 +29,13 @@ export const AuthContext = createContext(null);
 // Korumalı Rota Yardımcı Bileşenleri
 const PrivateRoute = ({ children }) => {
   const { isAuthenticated, loading } = React.useContext(AuthContext);
-  if (loading) return null; // Yükleme sırasında bir şey render etme
+  if (loading) return null;
   return isAuthenticated ? children : <Navigate to="/login" />;
 };
 
 const AdminRoute = ({ children }) => {
   const { isAuthenticated, user, loading } = React.useContext(AuthContext);
-  if (loading) return null; // Yükleme sırasında bir şey render etme
+  if (loading) return null;
   return isAuthenticated && user?.is_admin ? children : <Navigate to="/" />;
 };
 
@@ -83,7 +84,6 @@ function App() {
     <AuthContext.Provider value={{ ...authState, login, logout }}>
       <Router>
         <div className="App">
-          {/* TOAST BİLDİRİMLERİ İÇİN KONTEYNER ARTIK DOĞRU YERDE VE ÇALIŞIR DURUMDA */}
           <ToastContainer
             position="bottom-right"
             autoClose={4000}
@@ -116,6 +116,10 @@ function App() {
                 <Route path="dersleri-yonet" element={<ManageCoursesPage />} />
                 <Route path="egitmenleri-yonet" element={<ManageInstructors />} />
                 <Route path="kayit-talepleri" element={<EnrollmentRequests />} />
+                
+                {/* ==================== YENİ ROTA BURADA ==================== */}
+                <Route path="edit-course/:courseId" element={<EditCoursePage />} />
+                {/* ======================================================== */}
               </Route>
 
               {/* === Bulunamayan Sayfalar === */}
