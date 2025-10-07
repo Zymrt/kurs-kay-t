@@ -1,6 +1,7 @@
-import React from 'react';
-import { NavLink, Outlet } from 'react-router-dom';
-import './AdminPanel.css'; // Yeni CSS dosyamızı import ediyoruz
+import React from "react";
+import { NavLink, Outlet } from "react-router-dom";
+import "./AdminPanel.css"; // Yeni CSS dosyamızı import ediyoruz
+//import "./AdminPage.css";
 
 const AdminPage = () => {
   return (
@@ -10,17 +11,26 @@ const AdminPage = () => {
         <h2>Yönetim Paneli</h2>
         <ul className="admin-nav">
           <li>
-            <NavLink to="/admin/dersleri-yonet" className={({ isActive }) => (isActive ? 'active' : '')}>
+            <NavLink
+              to="/admin/dersleri-yonet"
+              className={({ isActive }) => (isActive ? "active" : "")}
+            >
               Dersleri Yönet
             </NavLink>
           </li>
           <li>
-            <NavLink to="/admin/egitmenleri-yonet" className={({ isActive }) => (isActive ? 'active' : '')}>
+            <NavLink
+              to="/admin/egitmenleri-yonet"
+              className={({ isActive }) => (isActive ? "active" : "")}
+            >
               Eğitmenleri Yönet
             </NavLink>
           </li>
           <li>
-            <NavLink to="/admin/kayit-talepleri" className={({ isActive }) => (isActive ? 'active' : '')}>
+            <NavLink
+              to="/admin/kayit-talepleri"
+              className={({ isActive }) => (isActive ? "active" : "")}
+            >
               Kayıt Talepleri
             </NavLink>
           </li>
@@ -29,7 +39,7 @@ const AdminPage = () => {
 
       {/* Sağ Tarafta Değişecek İçerik Alanı */}
       <main className="admin-content">
-        <Outlet /> 
+        <Outlet />
         {/* Outlet, iç içe rotaların bileşenlerini burada render eder */}
       </main>
     </div>

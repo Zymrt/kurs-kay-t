@@ -1,93 +1,146 @@
-/* src/pages/Courses/CourseList.css */
 .course-list-page {
-  max-width: 1200px;
-  margin: 2rem auto;
-  padding: 0 1rem;
+  padding: 20px;
+  text-align: center;
 }
 
 .course-list-page h1 {
-  text-align: center;
-  margin-bottom: 2rem;
-  font-size: 2.5rem;
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 30px;
+  color: #333;
 }
 
+/* Grid yapısı */
 .course-grid {
   display: grid;
-  /* 300px'den küçük olmayan, esnek genişlikte sütunlar oluştur */
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 2rem; /* Kartlar arası boşluk */
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 25px;
+  justify-content: center;
+  align-items: stretch;
 }
 
+/* Kart tasarımı */
 .course-card {
-  background-color: #ffffff;
+  background: #fff;
   border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  overflow: hidden; /* Resmin köşelerini yuvarlatmak için */
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
   display: flex;
   flex-direction: column;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  justify-content: space-between;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .course-card:hover {
   transform: translateY(-5px);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
 }
 
+/* Görsel */
 .course-card-image {
   width: 100%;
-  height: 180px;
-  object-fit: cover; /* Resmin orantısını bozmadan kaplamasını sağlar */
+  height: 160px;
+  object-fit: cover;
+  background: #f3f3f3;
 }
 
+/* İçerik */
 .course-card-content {
-  padding: 1.5rem;
-  display: flex;
-  flex-direction: column;
-  flex-grow: 1; /* İçeriğin kartın kalan boşluğunu doldurmasını sağlar */
+  padding: 15px 20px;
+  text-align: left;
 }
 
 .course-card-category {
-  background-color: #e0e7ff;
-  color: #4338ca;
-  padding: 4px 10px;
-  border-radius: 999px;
-  font-size: 0.8rem;
+  font-size: 12px;
   font-weight: 600;
-  align-self: flex-start; /* Kendini sola yasla */
-  margin-bottom: 0.75rem;
+  text-transform: uppercase;
+  color: #ff6600;
+  display: block;
+  margin-bottom: 6px;
 }
 
 .course-card-title {
-  margin: 0 0 0.5rem;
-  font-size: 1.25rem;
+  font-size: 20px;
+  font-weight: 700;
+  margin: 5px 0;
+  color: #222;
 }
 
 .course-card-instructor {
-  color: #6b7280;
-  font-size: 0.9rem;
-  margin-bottom: 1rem;
+  font-size: 14px;
+  color: #777;
+  margin-bottom: 10px;
 }
 
 .course-card-meta {
-  margin-top: auto; /* Kendini en alta it */
-  padding-top: 1rem;
-  border-top: 1px solid #f3f4f6;
-  font-size: 0.9rem;
-}
-
-.course-card-button {
-  display: block;
-  margin-top: 1rem;
-  padding: 12px;
-  background-color: #0d2d52;
-  color: white;
-  text-align: center;
-  text-decoration: none;
-  border-radius: 8px;
+  font-size: 14px;
   font-weight: 500;
-  transition: background-color 0.2s;
+  margin-bottom: 15px;
+  color: #333;
 }
 
-.course-card-button:hover {
-  background-color: #0056b3;
+/* Buton alanı */
+.course-card-actions {
+  margin-top: auto;
+}
+
+/* Katıl butonu (tam genişlikte) */
+.enroll-button {
+  width: 100%;
+  background: #ff6600;
+  color: #fff;
+  border: none;
+  padding: 12px 16px;
+  border-radius: 0 0 12px 12px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.enroll-button:hover {
+  background: #e05500;
+}
+
+.enroll-button.disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
+/* Loading ve error */
+.loading-container,
+.error-container,
+.no-courses-message {
+  font-size: 16px;
+  font-weight: 500;
+  margin-top: 20px;
+  color: #555;
+}
+
+/* src/pages/Courses/CourseList.css */
+
+.course-card-image {
+  width: 100%; /* Resim, kartın tam genişliğini kullansın */
+  height: 200px; /* Tüm kart resimleri için sabit bir yükseklik belirleyelim */
+
+  /* --- EN ÖNEMLİ KURAL BURASI --- */
+  object-fit: cover;
+
+  /* (Opsiyonel) Resmin dikey olarak hangi noktasını merkez alacağını belirtir */
+  object-position: center;
+}
+
+/* --- MOBİL UYUM (COURSE LIST) --- */
+@media (max-width: 768px) {
+  .course-list-page {
+    padding: 0 1rem; /* Kenar boşluklarını azalt */
+  }
+  .course-list-page h1 {
+    font-size: 2rem; /* Başlığı küçült */
+  }
+  .course-grid {
+    /* 320px minimum genişliği, daha küçük telefonlar için ayarlayalım */
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5rem; /* Kartlar arası boşluğu azalt */
+  }
 }

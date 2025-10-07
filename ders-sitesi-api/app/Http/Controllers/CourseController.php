@@ -30,51 +30,60 @@ class CourseController extends Controller
     /**
      * Yeni bir ders oluşturur. Sadece adminler erişebilir.
      */
-    public function store(Request $request)
-{
-    $validator = Validator::make($request->all(), [
-        'title' => 'required|string|max:255|unique:courses',
-        'description' => 'required|string',
-        'instructor_id' => 'required|string|exists:instructors,_id',
-        'category' => 'required|string',
-        'capacity' => 'required|integer|min:1',
-        'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048', // YENİ: Resim doğrulama kuralları
-    ]);
+     public function store(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'title' => 'required|string|max:255|unique:courses',
+            'description' => 'required|string',
+            'instructor_id' => 'required|string|exists:instructors,_id',
+            'category' => 'required|string',
+            'capacity' => 'required|integer|min:1',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ]);
 
-    if ($validator->fails()) {
-        return response()->json(['errors' => $validator->errors()], 422);
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
+
+        // --- Düzeltilmiş Veri Hazırlama Mantığı ---
+        
+        // Önce, doğrulanan tüm metin tabanlı verileri alalım.
+        // 'image' dosyası bu dizide olmayacak.
+        $dataToCreate = $validator->validated();
+
+        // Uzmanlık alanı kontrolünü yap
+        $instructor = Instructor::find($dataToCreate['instructor_id']);
+        if ($instructor->specialty !== $dataToCreate['category']) {
+             return response()->json([
+                'errors' => ['category' => ["Bu eğitmen sadece '{$instructor->specialty}' alanında ders verebilir."]]
+            ], 422);
+        }
+
+        // Diğer varsayılan değerleri ekle
+        $dataToCreate['enrolled_students'] = 0;
+        
+        // Resim Yükleme Mantığı
+        if ($request->hasFile('image') && $request->file('image')->isValid()) {
+            $path = $request->file('image')->store('courses', 'public');
+            $dataToCreate['image_url'] = Storage::url($path);
+        } else {
+            // Eğer resim gönderilmezse, varsayılan bir URL ata.
+            $dataToCreate['image_url'] = '/images/default-course.jpg';
+        }
+        
+        // 'image' anahtarını (eğer validated() tarafından eklendiyse) create işleminden önce çıkar.
+        unset($dataToCreate['image']);
+
+        // VERİTABANINA KAYDETME
+        $course = Course::create($dataToCreate);
+
+        return response()->json([
+            'message' => 'Ders başarıyla oluşturuldu.',
+            'data' => $course->load('instructor')
+        ], 201);
     }
 
-    // ... (Mevcut uzmanlık alanı kontrolü burada kalacak) ...
     
-    $validatedData = $validator->validated();
-    $validatedData['enrolled_students'] = 0;
-    
-    // --- YENİ RESİM YÜKLEME MANTIĞI ---
-    if ($request->hasFile('image')) {
-        // Gelen dosyayı 'courses' klasörünün içine, public diskini kullanarak kaydet.
-        $path = $request->file('image')->store('courses', 'public');
-        // Veritabanına kaydedilecek tam URL'yi oluştur.
-        $validatedData['image_url'] = Storage::url($path);
-    } else {
-        // Eğer resim gönderilmezse, varsayılan bir resim ata.
-        $validatedData['image_url'] = '/default-course.jpg'; // Bu resmi public klasörüne koyman gerekir.
-    }
-    
-    // 'image' alanını create işleminden önce çıkaralım, çünkü veritabanında yok.
-    unset($validatedData['image']);
-
-    $course = Course::create($validatedData);
-
-    return response()->json([
-        'message' => 'Ders başarıyla oluşturuldu.',
-        'data' => $course->load('instructor')
-    ], 201);
-}
-
-    /**
-     * Belirtilen bir dersi, eğitmen bilgisiyle birlikte gösterir.
-     */
     public function show(Course $course)
     {
         return response()->json($course->load('instructor'));
@@ -125,12 +134,20 @@ class CourseController extends Controller
      */
     public function destroy(Course $course)
     {
-        // Önce bu derse ait tüm kayıtları (enrollments) sil.
+        // Dersi silmeden önce, ilişkili tüm enrollment kayıtlarını sil.
+        // Course modelinde 'enrollments()' ilişkisi tanımlı olmalıdır.
         $course->enrollments()->delete();
         
-        // Sonra dersin kendisini sil.
+        // Eğer dersin bir resmi varsa, onu da storage'dan silmek iyi bir pratiktir.
+        if ($course->image_url && $course->image_url !== '/images/default-course.jpg') {
+            // URL'den dosya yolunu çıkar: '/storage/courses/abc.jpg' -> 'courses/abc.jpg'
+            $imagePath = str_replace('/storage/', '', $course->image_url);
+            Storage::disk('public')->delete($imagePath);
+        }
+        
+        // Son olarak dersin kendisini sil.
         $course->delete();
 
-        return response()->json(['message' => 'Ders ve ilişkili tüm başvurular başarıyla silindi.'], 200);
+        return response()->json(['message' => 'Ders ve ilişkili tüm veriler başarıyla silindi.'], 200);
     }
 }

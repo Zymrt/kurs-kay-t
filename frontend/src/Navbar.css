@@ -251,7 +251,7 @@
   align-items: center;
 
   /* Bu satır, bu bölümün en sağa yaslanmasını sağlar */
-  margin-left: auto; 
+  margin-left: auto;
 }
 
 /* Sosyal medya ikonları için de stillerin olduğundan emin ol */
@@ -272,4 +272,40 @@
 
 .social-icons-nav a:hover {
   transform: scale(1.2);
+}
+
+/* --- MOBİL UYUM (NAVBAR) --- */
+
+/* Genellikle tablet ve altı için (992px) */
+@media (max-width: 992px) {
+  /* Orta menüyü ve telefon/arama ikonlarını gizle */
+  .nav-menu-center,
+  .action-icons {
+    display: none;
+  }
+  .navbar-container {
+    justify-content: space-between; /* Logo ile kalanları iki uca yasla */
+  }
+}
+
+/* Telefonlar için (768px) */
+@media (max-width: 768px) {
+  /* Atatürk logosunu ve büyük başlığı da gizle */
+  .ataturk-logo,
+  .navbar-title {
+    display: none;
+  }
+  .brand-text span {
+    /* Sadece 'MEZİTLİ BELEDİYESİ' kalsın */
+    font-size: 0.9rem;
+  }
+  .navbar-logo {
+    height: 50px;
+  }
+  .navbar-container {
+    padding: 0 20px; /* Kenar boşluklarını azalt */
+  }
+  .nav-menu-user {
+    gap: 10px; /* Kullanıcı butonları arası boşluğu azalt */
+  }
 }

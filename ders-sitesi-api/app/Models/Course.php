@@ -3,7 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use MongoDB\Laravel\Eloquent\Model; // Bu satırın doğru olduğundan emin olun
+use MongoDB\Laravel\Eloquent\Model; 
 
 class Course extends Model
 {
@@ -19,6 +19,7 @@ class Course extends Model
         'category',
         'capacity',
         'enrolled_students',
+        'image_url',
     ];
 
     /**
@@ -42,4 +43,9 @@ class Course extends Model
     {
         return $this->enrolled_students >= $this->capacity;
     }
+
+    public function enrollments()
+{
+    return $this->hasMany(\App\Models\Enrollment::class, 'course_id');
+}
 }

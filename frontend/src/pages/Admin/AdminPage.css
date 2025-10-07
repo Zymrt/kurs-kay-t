@@ -1,0 +1,136 @@
+/* src/pages/Admin/AdminPage.css */
+
+/* --- Ana Panel Düzeni --- */
+.admin-panel {
+  display: flex;
+  min-height: calc(
+    100vh - 80px
+  ); /* Ekranın Navbar hariç tamamını kapla (Navbar yüksekliği 80px varsayıldı) */
+  background-color: #f3f4f6; /* Hafif gri bir arkaplan */
+}
+
+.admin-sidebar h2 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #ffffff;
+  margin: 0 0 2rem 0;
+  text-align: center;
+  border-bottom: 1px solid #374151;
+  padding-bottom: 1.5rem;
+}
+
+.admin-nav {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.admin-nav li {
+  margin-bottom: 0.5rem;
+}
+
+/* NavLink için genel stil */
+.admin-nav a {
+  display: block;
+  padding: 1rem;
+  color: #d1d5db;
+  text-decoration: none;
+  border-radius: 8px;
+  font-weight: 500;
+  transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
+}
+
+/* Linkin üzerine gelindiğinde */
+.admin-nav a:hover {
+  background-color: #374151;
+  color: #ffffff;
+}
+
+/* Aktif olan linkin stili (NavLink'in 'active' sınıfı) */
+.admin-nav a.active {
+  background-color: #3b82f6; /* Mavi */
+  color: #ffffff;
+  font-weight: 600;
+}
+
+/* --- Sağ İçerik Alanı --- */
+.admin-content {
+  flex-grow: 1; /* Kalan tüm genişliği kapla */
+  padding: 2rem;
+  overflow-y: auto; /* İçerik taşarsa kaydırma çubuğu çıksın */
+}
+
+/* Mobil Cihazlar İçin Düzenlemeler */
+@media (max-width: 768px) {
+  .admin-panel {
+    flex-direction: column; /* Alt alta gelsinler */
+  }
+
+  .admin-sidebar {
+    width: 100%;
+    height: auto;
+    min-height: auto;
+    flex-direction: row; /* Yan yana gelsinler */
+    justify-content: space-around; /* Linkleri dağıt */
+    align-items: center;
+    padding: 1rem;
+  }
+
+  .admin-sidebar h2 {
+    display: none; /* Mobilde başlığı gizle */
+  }
+
+  .admin-sidebar .admin-nav {
+    display: flex;
+    gap: 1rem; /* Linkler arası boşluk */
+  }
+
+  .admin-sidebar .admin-nav a {
+    padding: 0.5rem 1rem;
+  }
+
+  .admin-content {
+    padding: 1.5rem;
+  }
+}
+
+/* --- MOBİL UYUM (ADMIN PANEL) --- */
+
+@media (max-width: 992px) {
+  /* Tablet ve altı için, paneli dikey (alt alta) hale getir */
+  .admin-panel {
+    flex-direction: column;
+  }
+
+  .admin-sidebar {
+    width: 100%; /* Menü tam genişliği kaplasın */
+    height: auto;
+    min-height: auto;
+    /* Menü elemanlarını yan yana sırala */
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    padding: 0.5rem 1rem;
+    gap: 1rem;
+  }
+
+  .admin-sidebar h2 {
+    display: none; /* "Yönetim Paneli" başlığını mobilde gizle */
+  }
+
+  .admin-sidebar .admin-nav {
+    display: flex;
+    flex-direction: row;
+  }
+  .admin-sidebar .admin-nav a {
+    padding: 0.5rem 1rem;
+  }
+}
+
+/* Admin panelinin formlarını ve tablolarını da düzenleyebiliriz */
+@media (max-width: 576px) {
+  .admin-form-grid-2-col {
+    grid-template-columns: 1fr; /* İki sütunlu formu tek sütuna indir */
+  }
+}

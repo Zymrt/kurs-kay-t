@@ -51,6 +51,8 @@ Route::middleware('auth:api')->group(function () {
     // POST /enrollments/{course} -> Bir derse başvuru oluşturur. Controller metodu: store
     Route::post('/enrollments/{course}', [EnrollmentController::class, 'store']);
     Route::get('/my-enrollments', [EnrollmentController::class, 'myEnrollments']);
+    Route::delete('/enrollments/{enrollment}', [EnrollmentController::class, 'cancelEnrollment']);
+
 
 
     

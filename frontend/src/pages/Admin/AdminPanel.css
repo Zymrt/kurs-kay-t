@@ -66,3 +66,33 @@
   margin-top: 0;
   color: #333;
 }
+
+/* Bu stilleri AdminPanel.css veya ManagementPages.css'e ekleyebilirsiniz */
+
+.management-list table {
+  /* ... */
+}
+.management-list th,
+.management-list td {
+  /* ... */
+}
+.action-buttons {
+  /* ... */
+}
+.btn-edit,
+.btn-delete {
+  /* ... */
+}
+.edit-form-modal {
+  /* ... */
+}
+.edit-form {
+  /* ... */
+}
+.edit-form .form-actions {
+  /* ... */
+}
+.edit-form .btn-save,
+.edit-form .btn-cancel {
+  /* ... */
+}

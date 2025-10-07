@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use MongoDB\Laravel\Eloquent\Model;
+use App\Models\Course; 
 
 class Enrollment extends Model
 {
@@ -39,4 +40,11 @@ class Enrollment extends Model
     {
         return $this->belongsTo(Course::class);
     }
+
+    public function cancel()
+    {
+        return $this->belongsTo(Course::class);
+    }
+
+
 }

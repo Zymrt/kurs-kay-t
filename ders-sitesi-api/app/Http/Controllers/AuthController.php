@@ -81,9 +81,7 @@ class AuthController extends Controller
         return response()->json(Auth::guard('api')->user());
     }
     
-    /**
-     * Token, kullanıcı ve diğer bilgileri içeren standart bir cevap formatı oluşturan yardımcı fonksiyon.
-     */
+    
     protected function respondWithToken($token, $message = 'İşlem başarılı.')
     {
         return response()->json([

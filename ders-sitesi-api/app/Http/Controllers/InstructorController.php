@@ -10,19 +10,16 @@ class InstructorController extends Controller
 {
     /**
      * Tüm eğitmenleri listeler.
-     * Bu rota genellikle herkese açık olabilir veya sadece adminlerin
-     * ders ekleme formunda kullanması için korunabilir. Rota tanımına bağlıdır.
      */
     public function index()
     {
-        // Sayfalama, çok sayıda eğitmen olduğunda performansı korur.
+        
         $instructors = Instructor::latest()->paginate(15); 
         return response()->json($instructors);
     }
 
-    /**
-     * Yeni bir eğitmen oluşturur. Sadece adminler erişebilir.
-     */
+    // Sadece adminler erişebilir.
+
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -43,18 +40,12 @@ class InstructorController extends Controller
         ], 201);
     }
 
-    /**
-     * Belirtilen bir eğitmeni, verdiği derslerle birlikte gösterir.
-     */
-    public function show(Instructor $instructor) // Route-Model Binding kullanıyoruz
+    public function show(Instructor $instructor) 
     {
-        // Eğitmeni, ilişkili dersleriyle birlikte yükleyip döndürüyoruz.
+        
         return response()->json($instructor->load('courses'));
     }
 
-    /**
-     * Mevcut bir eğitmeni günceller. Sadece adminler erişebilir.
-     */
     public function update(Request $request, Instructor $instructor)
     {
         $validator = Validator::make($request->all(), [
@@ -75,16 +66,13 @@ class InstructorController extends Controller
         ]);
     }
 
-    /**
-     * Bir eğitmeni siler. Sadece adminler erişebilir.
-     */
+    
     public function destroy(Instructor $instructor)
     {
-        // GÜVENLİK KONTROLÜ: Eğitmenin aktif bir dersi varsa silinmesini engelle.
         if ($instructor->courses()->exists()) {
             return response()->json([
                 'error' => 'Bu eğitmen aktif dersler verdiği için silinemez. Lütfen önce derslerini başka bir eğitmene atayın.'
-            ], 409); // 409 Conflict - Çakışma durumu
+            ], 409);
         }
 
         $instructor->delete();

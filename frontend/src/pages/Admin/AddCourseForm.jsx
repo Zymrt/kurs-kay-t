@@ -51,22 +51,24 @@ const AddCourseForm = ({ onCourseAdded }) => {
     }
 
     try {
+      // 2. localStorage'dan token'ı alıyoruz.
       const token = localStorage.getItem("authToken");
-      // Dosya yükleme için axios kullanıyoruz.
+
+      // 3. EN ÖNEMLİ KISIM: fetchAPI yerine doğrudan axios.post kullanıyoruz.
       await axios.post(
-        `${process.env.REACT_APP_API_URL}/admin/courses`,
-        formData,
+        `${process.env.REACT_APP_API_URL}/admin/courses`, // Backend'in doğru adresi
+        formData, // Gönderilecek veri FormData objesi
         {
           headers: {
-            // FormData gönderirken bu başlık önemlidir.
-            // Axios bunu genellikle otomatik ayarlar ama belirtmekte fayda var.
-            "Content-Type": "multipart/form-data",
+            // Axios, FormData gönderdiğimizde 'Content-Type': 'multipart/form-data'
+            // başlığını ve gerekli 'boundary'yi OTOMATİK olarak ayarlar.
+            // Bizim sadece Authorization başlığını eklememiz yeterlidir.
             Authorization: `Bearer ${token}`,
           },
         }
       );
 
-      setMessage("Ders başarıyla eklendi!");
+      toast.success("Ders başarıyla eklendi!");
       // Formu temizle
       setTitle("");
       setDescription("");
@@ -77,15 +79,18 @@ const AddCourseForm = ({ onCourseAdded }) => {
       // Input type file'ı temizlemek için:
       document.getElementById("course-image").value = null;
 
+      fetchData();
+
       if (onCourseAdded) {
         onCourseAdded();
       }
     } catch (error) {
+      // Axios, hata detaylarını error.response.data içinde saklar.
       const errorMsg = error.response?.data?.errors
         ? Object.values(error.response.data.errors).flat().join(" ")
         : error.response?.data?.message || "Ders eklenemedi.";
-      setMessage(errorMsg);
-      setIsError(true);
+      toast.error(`Hata: ${errorMsg}`);
+      console.error("Ders ekleme hatası:", error);
     } finally {
       setIsLoading(false);
     }
@@ -139,7 +144,6 @@ const AddCourseForm = ({ onCourseAdded }) => {
       <div className="form-group">
         <label htmlFor="course-image">Ders Resmi (Opsiyonel)</label>
         <input
-          id="course-image"
           type="file"
           accept="image/*"
           onChange={(e) => setImageFile(e.target.files[0])}
@@ -178,7 +182,6 @@ const AddCourseForm = ({ onCourseAdded }) => {
       )}
     </form>
   );
-}; // Fonksiyon burada bitiyor
+};
 
-// 'export default' en sonda olmalı
 export default AddCourseForm;
